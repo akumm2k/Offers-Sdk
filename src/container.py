@@ -23,8 +23,10 @@ class Container(containers.DeclarativeContainer):
         auth_endpoint=config.auth_endpoint,
         refresh_token=config.refresh_token,
     )
-    offers_sdk: providers.Factory[OffersClient] = providers.Factory(
-        OffersClient,
-        http_client=http_client,
-        base_url=config.base_url,
+    offers_client: providers.Factory[OffersClient] = (
+        providers.Factory(
+            OffersClient,
+            http_client=http_client,
+            api_config=api_config,
+        )
     )
