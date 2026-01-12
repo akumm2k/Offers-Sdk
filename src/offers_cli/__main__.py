@@ -8,7 +8,7 @@ from offers_sdk.config import ApiConfig
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filename="offers_sdk.log",
+    filename="offers_cli.log",
     filemode="a",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
