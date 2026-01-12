@@ -1,8 +1,9 @@
 from http import HTTPStatus
+from typing import Type
 
 import pytest
 
-from http_client.http_client import HttpResponse
+from http_client.http_client import HttpResponse, JSONType
 
 
 @pytest.fixture
@@ -19,7 +20,7 @@ def sample_json() -> dict:
         (list, [{"id": 1}, {"id": 2}, {"id": 3}]),
     ],
 )
-def test_get_json_as_dictionary(json_type, json_data):
+def test_get_json_as_dictionary(json_type: Type, json_data: JSONType):
     # Arrange
     http_response = HttpResponse(
         status_code=HTTPStatus.OK,
@@ -42,7 +43,9 @@ def test_get_json_as_dictionary(json_type, json_data):
         ([{"id": 1}, {"id": 2}, {"id": 3}], dict),
     ],
 )
-def test_get_json_as_invalid_type_raises(json_data, invalid_type):
+def test_get_json_as_invalid_type_raises(
+    json_data: JSONType, invalid_type: Type
+):
     # Arrange
     http_response = HttpResponse(
         status_code=HTTPStatus.OK,

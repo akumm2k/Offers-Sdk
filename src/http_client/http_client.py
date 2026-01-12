@@ -11,9 +11,12 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypeAlias,
 )
 
 import jwt
+
+JSONType: TypeAlias = Dict | List
 
 
 class TokenRefreshError(Exception):
@@ -43,7 +46,7 @@ class HttpResponse:
     def __init__(
         self,
         status_code: HTTPStatus,
-        json: Dict | List,
+        json: JSONType,
     ):
         self.status_code = status_code
         self.json = json
