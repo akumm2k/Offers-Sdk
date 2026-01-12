@@ -47,7 +47,9 @@ class OffersSDK:
             case HTTPStatus.UNAUTHORIZED:
                 raise AuthenticationError("Check refresh token")
             case HTTPStatus.UNPROCESSABLE_CONTENT:
-                raise ValidationError()
+                raise ValidationError(
+                    f"\nServer Response: {resp.json}"
+                )
             case code if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
                 raise ServerError()
         return resp.json
@@ -60,6 +62,7 @@ class OffersSDK:
             case HTTPStatus.CONFLICT:
                 raise ValidationError(
                     f"Product with ID {product_id} already exists"
+                    f"\nServer Response: {resp.json}"
                 )
         return resp.json
 

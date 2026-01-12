@@ -1,17 +1,26 @@
 """Domain Exceptions for the SDK"""
 
 
-class SDKError(Exception):
+class ServerError(Exception):
+    """
+    Exception raised for server-side errors (5xx HTTP status codes).
+    """
+
     pass
 
 
-class ServerError(SDKError):
+class AuthenticationError(Exception):
+    """
+    Exception for authentication failures.
+    """
+
     pass
 
 
-class AuthenticationError(SDKError):
-    pass
+class ValidationError(Exception):
+    """
+    Exception for Server-side validation errors.
+    For example, server not being able to process the request.
+    """
 
-
-class ValidationError(SDKError):
     pass
