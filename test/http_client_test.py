@@ -63,7 +63,7 @@ class MockClient(BaseHttpClient):
                 status_code=HTTPStatus.UNAUTHORIZED, json={}
             )
         return HttpResponse(
-            status_code=HTTPStatus.OK,
+            status_code=HTTPStatus.CREATED,
             json={"access_token": self._future_token},
         )
 

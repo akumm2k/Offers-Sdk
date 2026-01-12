@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from functools import wraps
-from http import HTTPStatus
 from types import CoroutineType
 from typing import (
     Any,
@@ -66,7 +65,7 @@ class BaseHttpClient(ABC):
             headers={"Bearer": self._refresh_token},
         )
 
-        if resp.status_code == HTTPStatus.OK:
+        if resp.status_code.is_success:
             data = resp.get_json_as(dict)
             token = data["access_token"]
             self._access_token = token
@@ -102,5 +101,4 @@ class BaseHttpClient(ABC):
     async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        pass  # pragma: no cover
         pass  # pragma: no cover
