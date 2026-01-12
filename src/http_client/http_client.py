@@ -16,7 +16,15 @@ from typing import (
 
 import jwt
 
-JSONType: TypeAlias = Dict | List
+JSONType: TypeAlias = (
+    Dict[str, "JSONType"]
+    | List["JSONType"]
+    | int
+    | str
+    | float
+    | bool
+    | None
+)
 
 
 class TokenRefreshError(Exception):

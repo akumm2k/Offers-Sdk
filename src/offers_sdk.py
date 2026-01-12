@@ -1,6 +1,7 @@
 import uuid
 from http import HTTPStatus
-from typing import Callable, Coroutine, List, Optional
+from types import CoroutineType
+from typing import Any, Callable, List, Optional
 from uuid import UUID
 
 from config import ApiConfig
@@ -24,10 +25,10 @@ TOKEN_ERROR_MESSAGES = {
 }
 
 
-def handle_token_refresh_error(
-    decorated_func: Callable[..., Coroutine],
-) -> Callable[..., Coroutine]:
-    async def wrapper[**P](*args: P.args, **kwargs: P.kwargs):
+def handle_token_refresh_error[T](
+    decorated_func: Callable[..., CoroutineType[Any, Any, T]],
+) -> Callable[..., CoroutineType[Any, Any, T]]:
+    async def wrapper[**P](*args: P.args, **kwargs: P.kwargs) -> T:
         try:
             return await decorated_func(*args, **kwargs)
         except TokenRefreshError as exc:
@@ -81,7 +82,10 @@ class OffersSDK:
     async def get_offers(self, product_id: UUID) -> List[Offer]:
         resp = await self._http_client.get(f"{product_id}/offers")
         OffersSDK._validate_response(resp)
-        return Offers.validate_python(resp.get_json_as(list))
+        offers: List[Offer] = Offers.validate_python(
+            resp.get_json_as(list)
+        )
+        return offers
 
     @handle_token_refresh_error
     async def register_product(
