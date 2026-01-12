@@ -1,6 +1,5 @@
 from container import Container
 
-
 if __name__ == "__main__":
     container = Container()
     container.config.base_url.from_env("OFFERS_API_BASE_URL")

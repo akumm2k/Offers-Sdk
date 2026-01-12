@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Any, Tuple, Coroutine, Optional
-from functools import wraps
 from datetime import datetime, timezone
-import jwt
+from functools import wraps
 from http import HTTPStatus
+from typing import Any, Callable, Coroutine, Dict, Optional, Tuple
+
+import jwt
 
 
 class TokenRefreshError(Exception):

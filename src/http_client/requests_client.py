@@ -1,12 +1,13 @@
-from typing import Dict
-from http_client.http_client import HttpClient, HttpResponse
-import requests
 import asyncio
 from http import HTTPStatus
+from typing import Dict
+from urllib.parse import urljoin
+
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from urllib.parse import urljoin
-from http_client.http_client import ensure_refresh_token
+
+from http_client.http_client import HttpClient, HttpResponse, ensure_refresh_token
 
 
 class RequestsClient(HttpClient):

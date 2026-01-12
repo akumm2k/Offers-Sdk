@@ -1,18 +1,21 @@
+import uuid
+from http import HTTPStatus
+from typing import Callable, Coroutine, Dict, List, Optional
+from uuid import UUID
+
+from config import ApiConfig
+from exceptions import (
+    AuthenticationError,
+    ServerError,
+    ValidationError,
+)
 from http_client.http_client import (
     HttpClient,
     HttpResponse,
     TokenRefreshError,
 )
-import uuid
-from exceptions import (
-    AuthenticationError,
-    ValidationError,
-    ServerError,
-)
-from uuid import UUID
-from models import Product, Offers, ProductID, Offer
-from http import HTTPStatus
-from typing import List, Dict, Callable, Coroutine, Optional
+from http_client.requests_client import RequestsClient
+from models import Offer, Offers, Product, ProductID
 
 TOKEN_ERROR_MESSAGES = {
     HTTPStatus.UNAUTHORIZED: "Failed to refresh token",
@@ -38,8 +41,17 @@ def handle_token_refresh_error(
 
 
 class OffersSDK:
-    def __init__(self, http_client: HttpClient) -> None:
-        self._http_client = http_client
+    def __init__(
+        self,
+        api_config: ApiConfig,
+        http_client: Optional[HttpClient] = None,
+    ) -> None:
+        self._http_client = http_client or RequestsClient(
+            base_url=api_config.base_url,
+            refresh_token=api_config.refresh_token,
+            auth_endpoint=api_config.auth_endpoint,
+        )
+        self._api_config = api_config
 
     @staticmethod
     def _validate_response(resp: HttpResponse) -> Dict:
