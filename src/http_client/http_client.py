@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from functools import wraps
 from http import HTTPStatus
-from typing import Any, Callable, Coroutine, Dict, Optional, Tuple
+from types import CoroutineType
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import jwt
 
@@ -16,8 +17,8 @@ class TokenRefreshError(Exception):
 
 
 def ensure_refresh_token(
-    http_call: Callable[..., Coroutine[Any, Any, HttpResponse]],
-) -> Callable[..., Coroutine[Any, Any, HttpResponse]]:
+    http_call: Callable[..., CoroutineType[Any, Any, HttpResponse]],
+) -> Callable[..., CoroutineType[Any, Any, HttpResponse]]:
     @wraps(http_call)
     async def wrapper(
         self: HttpClient,
@@ -38,8 +39,9 @@ class HttpResponse:
 
 class HttpClient(ABC):
     def __init__(
-        self, *, refresh_token: str, auth_endpoint: str
+        self, *, base_url: str, refresh_token: str, auth_endpoint: str
     ) -> None:
+        self._base_url = base_url
         self._refresh_token = refresh_token
         self._auth_endpoint = auth_endpoint
         self._access_token: Optional[str] = None
@@ -57,7 +59,7 @@ class HttpClient(ABC):
             await self._refresh_access_token()
 
     async def _refresh_access_token(self) -> None:
-        resp = await self.post(
+        resp = await self._unauthenticated_post(
             self._auth_endpoint,
             headers={"Bearer": self._refresh_token},
         )
@@ -83,15 +85,19 @@ class HttpClient(ABC):
         return ret
 
     @abstractmethod
-    @ensure_refresh_token
     async def get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
         pass
 
     @abstractmethod
-    @ensure_refresh_token
     async def post(
+        self, endpoint: str, data: Dict = {}, headers: Dict = {}
+    ) -> HttpResponse:
+        pass
+
+    @abstractmethod
+    async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
         pass

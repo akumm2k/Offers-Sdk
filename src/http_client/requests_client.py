@@ -10,7 +10,6 @@ from urllib3.util.retry import Retry
 from http_client.http_client import (
     HttpClient,
     HttpResponse,
-    ensure_refresh_token,
 )
 
 
@@ -19,9 +18,10 @@ class RequestsClient(HttpClient):
         self, base_url: str, refresh_token: str, auth_endpoint: str
     ) -> None:
         super().__init__(
-            refresh_token=refresh_token, auth_endpoint=auth_endpoint
+            base_url=base_url,
+            refresh_token=refresh_token,
+            auth_endpoint=auth_endpoint,
         )
-        self._base_url = base_url
         adapter = HTTPAdapter(
             max_retries=Retry(
                 total=3,
@@ -39,10 +39,11 @@ class RequestsClient(HttpClient):
         self._session = requests.Session()
         self._session.mount("https://", adapter)
 
-    @ensure_refresh_token
     async def get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
+        await self._ensure_refresh_token()
+
         def sync_get():
             url = urljoin(self._base_url, endpoint)
             response = self._session.get(
@@ -57,8 +58,7 @@ class RequestsClient(HttpClient):
 
         return await asyncio.to_thread(sync_get)
 
-    @ensure_refresh_token
-    async def post(
+    async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
         def sync_post():
@@ -74,3 +74,11 @@ class RequestsClient(HttpClient):
             )
 
         return await asyncio.to_thread(sync_post)
+
+    async def post(
+        self, endpoint: str, data: Dict = {}, headers: Dict = {}
+    ) -> HttpResponse:
+        await self._ensure_refresh_token()
+        return await self._unauthenticated_post(
+            endpoint, data=data, headers=headers
+        )
