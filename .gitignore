@@ -22,3 +22,7 @@ python-exercise-client
 
 # CLI logs
 src/offers_cli.log
+
+
+# Rest client files
+httprequests/
