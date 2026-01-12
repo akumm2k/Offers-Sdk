@@ -39,7 +39,7 @@ class RequestsClient(BaseHttpClient):
         self._session = requests.Session()
         self._session.mount("https://", adapter)
 
-    async def get(
+    async def _unauthenticated_get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
         await self._ensure_refresh_token()
@@ -74,11 +74,3 @@ class RequestsClient(BaseHttpClient):
             )
 
         return await asyncio.to_thread(sync_post)
-
-    async def post(
-        self, endpoint: str, data: Dict = {}, headers: Dict = {}
-    ) -> HttpResponse:
-        await self._ensure_refresh_token()
-        return await self._unauthenticated_post(
-            endpoint, data=data, headers=headers
-        )

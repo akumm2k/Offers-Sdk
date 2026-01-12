@@ -7,11 +7,16 @@ import requests
 from pytest_mock import MockerFixture
 
 from offers_sdk.http.base_client import BaseHttpClient
+from offers_sdk.http.http_response import JSONType
 from offers_sdk.http.requests_client import RequestsClient
 
 
 class MockResponse:
-    def __init__(self, status_code: int = 200, json_data: Dict = {}):
+    def __init__(
+        self,
+        status_code: HTTPStatus = HTTPStatus.OK,
+        json_data: JSONType = {},
+    ):
         self.status_code = status_code
         self._json_data = json_data or {}
 
@@ -155,4 +160,5 @@ async def test_post(
         headers=headers_arg,
     )
     assert resp.status_code == expected_status
+    assert resp.json == expected_json
     assert resp.json == expected_json

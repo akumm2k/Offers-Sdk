@@ -37,13 +37,8 @@ def offers_sdk(
 
 
 class MockHttpClient(BaseHttpClient):
-    async def get(
+    async def _unauthenticated_get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
-    ) -> HttpResponse:
-        raise NotImplementedError
-
-    async def post(
-        self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
         raise NotImplementedError
 

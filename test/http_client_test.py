@@ -8,7 +8,6 @@ from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
-    ensure_refresh_token,
 )
 
 _VALID_REFRESH_TOKEN = "secret_refresh_token"
@@ -39,8 +38,7 @@ class MockClient(BaseHttpClient):
         )
         self._future_token = future_token
 
-    @ensure_refresh_token
-    async def get(
+    async def _unauthenticated_get(
         self, endpoint: str, params: dict = {}, headers: dict = {}
     ) -> HttpResponse:
         if self._access_token is None:
@@ -67,7 +65,6 @@ class MockClient(BaseHttpClient):
             json={"access_token": self._future_token},
         )
 
-    @ensure_refresh_token
     async def post(
         self, endpoint: str, data: dict = {}, headers: dict = {}
     ) -> HttpResponse:
