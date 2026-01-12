@@ -100,7 +100,9 @@ async def test_get_offers(
 
     # Assert
     assert actual_offers == expected_offers
-    mocked_get.assert_called_once_with(f"{product_id}/offers")
+    mocked_get.assert_called_once_with(
+        f"products/{product_id}/offers"
+    )
 
 
 @pytest.mark.asyncio
@@ -139,7 +141,7 @@ async def test_register_product(
     # Assert
     assert result.product_id == str(product_id)
     mocked_post.assert_called_once_with(
-        "products",
+        "products/register",
         data={**product.model_dump(), "id": str(product_id)},
     )
 

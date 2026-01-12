@@ -36,7 +36,9 @@ def handle_token_refresh_error[T](
                 exc.http_response.status_code,
                 "Unknown token refresh error",
             )
-            raise AuthenticationError(message) from exc
+            raise AuthenticationError(
+                message, exc.http_response
+            ) from exc
 
     return wrapper
 
@@ -58,29 +60,33 @@ class OffersSDK:
     def _validate_response(resp: HttpResponse) -> None:
         match resp.status_code:
             case HTTPStatus.UNAUTHORIZED:
-                raise AuthenticationError("Check refresh token")
+                raise AuthenticationError("Check refresh token", resp)
             case HTTPStatus.UNPROCESSABLE_CONTENT:
                 raise ValidationError(
-                    f"\nServer Response: {resp.json}"
+                    "Malformed authentication request", resp
                 )
             case code if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
-                raise ServerError()
+                raise ServerError("Server error", resp)
+            case code if not code.is_success:
+                raise Exception("Unexpected error", resp)
 
     @staticmethod
     def _validate_register_product_response(
         resp: HttpResponse, product_id: UUID
     ) -> None:
-        OffersSDK._validate_response(resp)
         match resp.status_code:
             case HTTPStatus.CONFLICT:
                 raise ValidationError(
-                    f"Product with ID {product_id} already exists"
-                    f"\nServer Response: {resp.json}"
+                    f"Product with ID {product_id} already exists",
+                    resp,
                 )
+        OffersSDK._validate_response(resp)
 
     @handle_token_refresh_error
     async def get_offers(self, product_id: UUID) -> List[Offer]:
-        resp = await self._http_client.get(f"{product_id}/offers")
+        resp = await self._http_client.get(
+            f"products/{product_id}/offers"
+        )
         OffersSDK._validate_response(resp)
         offers: List[Offer] = Offers.validate_python(
             resp.get_json_as(list)
@@ -94,7 +100,7 @@ class OffersSDK:
         product_id = product_id or uuid.uuid7()
         id_payload = {"id": str(product_id)}
         response = await self._http_client.post(
-            "products",
+            "products/register",
             data=product.model_dump() | id_payload,
         )
         OffersSDK._validate_register_product_response(

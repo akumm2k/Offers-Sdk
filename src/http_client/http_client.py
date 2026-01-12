@@ -8,6 +8,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Mapping,
     Optional,
     Tuple,
     Type,
@@ -17,7 +18,7 @@ from typing import (
 import jwt
 
 JSONType: TypeAlias = (
-    Dict[str, "JSONType"]
+    Mapping[str, "JSONType"]
     | List["JSONType"]
     | int
     | str
@@ -59,10 +60,12 @@ class HttpResponse:
         self.status_code = status_code
         self.json = json
 
-    def get_json_as[T](self, type: Type[T]) -> T:
-        if isinstance(self.json, type):
+    def get_json_as[T](self, _type: Type[T]) -> T:
+        if isinstance(self.json, _type):
             return self.json
-        raise ValueError(f"Response JSON is not a {type.__name__}")
+        raise ValueError(
+            f"Response JSON is not a {_type.__name__}, but {type(self.json).__name__}"
+        )
 
 
 class HttpClient(ABC):
