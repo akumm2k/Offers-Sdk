@@ -123,9 +123,9 @@ async def test_register_product(
     product: Product,
 ):
     # Arrange
-    product_id = UUID("123e4567-e89b-12d3-a456-426614174000")
+    product_id = uuid7()
     response_data = {
-        "product_id": str(product_id),
+        "id": str(product_id),
     }
     http_response = HttpResponse(
         status_code=HTTPStatus.OK,

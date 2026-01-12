@@ -108,4 +108,3 @@ class OffersClient:
         )
         data = response.get_json_as(dict)
         return ProductID(**data)
-        return ProductID(**data)

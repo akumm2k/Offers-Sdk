@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 
 class Offer(BaseModel):
@@ -22,4 +22,4 @@ class Product(BaseModel):
 
 class ProductID(BaseModel):
     model_config = ConfigDict(frozen=True)
-    product_id: str
+    product_id: str = Field(alias="id")
