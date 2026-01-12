@@ -51,7 +51,7 @@ class HttpResponse:
     def get_json_as[T](self, type: Type[T]) -> T:
         if isinstance(self.json, type):
             return self.json
-        raise ValueError("Response JSON is not a dictionary")
+        raise ValueError(f"Response JSON is not a {type.__name__}")
 
 
 class HttpClient(ABC):
