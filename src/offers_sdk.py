@@ -1,6 +1,6 @@
 import uuid
 from http import HTTPStatus
-from typing import Callable, Coroutine, Dict, List, Optional
+from typing import Callable, Coroutine, List, Optional
 from uuid import UUID
 
 from config import ApiConfig
@@ -54,7 +54,7 @@ class OffersSDK:
         self._api_config = api_config
 
     @staticmethod
-    def _validate_response(resp: HttpResponse) -> Dict:
+    def _validate_response(resp: HttpResponse) -> None:
         match resp.status_code:
             case HTTPStatus.UNAUTHORIZED:
                 raise AuthenticationError("Check refresh token")
@@ -64,25 +64,23 @@ class OffersSDK:
                 )
             case code if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
                 raise ServerError()
-        return resp.json
 
     @staticmethod
     def _validate_register_product_response(
         resp: HttpResponse, product_id: UUID
-    ) -> Dict:
+    ) -> None:
         match resp.status_code:
             case HTTPStatus.CONFLICT:
                 raise ValidationError(
                     f"Product with ID {product_id} already exists"
                     f"\nServer Response: {resp.json}"
                 )
-        return resp.json
 
     @handle_token_refresh_error
     async def get_offers(self, product_id: UUID) -> List[Offer]:
         resp = await self._http_client.get(f"{product_id}/offers")
-        data = OffersSDK._validate_response(resp)
-        return Offers.validate_python(data)
+        OffersSDK._validate_response(resp)
+        return Offers.validate_python(resp.get_json_as(list))
 
     @handle_token_refresh_error
     async def register_product(
@@ -94,8 +92,8 @@ class OffersSDK:
             "products",
             data=product.model_dump() | id_payload,
         )
-        data = OffersSDK._validate_register_product_response(
+        OffersSDK._validate_register_product_response(
             response, product_id
         )
-
+        data = response.get_json_as(dict)
         return ProductID(**data)

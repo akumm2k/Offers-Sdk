@@ -3,7 +3,15 @@ from datetime import datetime, timezone
 from functools import wraps
 from http import HTTPStatus
 from types import CoroutineType
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+)
 
 import jwt
 
@@ -32,9 +40,18 @@ def ensure_refresh_token(
 
 
 class HttpResponse:
-    def __init__(self, status_code: HTTPStatus, json: Dict):
+    def __init__(
+        self,
+        status_code: HTTPStatus,
+        json: Dict | List,
+    ):
         self.status_code = status_code
         self.json = json
+
+    def get_json_as[T](self, type: Type[T]) -> T:
+        if isinstance(self.json, type):
+            return self.json
+        raise ValueError("Response JSON is not a dictionary")
 
 
 class HttpClient(ABC):
@@ -65,7 +82,7 @@ class HttpClient(ABC):
         )
 
         if resp.status_code == HTTPStatus.OK:
-            data = resp.json
+            data = resp.get_json_as(dict)
             token = data["access_token"]
             self._access_token = token
             self._token_expiry = self._decode_jwt_expiry(token)
