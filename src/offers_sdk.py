@@ -10,8 +10,8 @@ from exceptions import (
     ServerError,
     ValidationError,
 )
-from http_client.http_client import (
-    HttpClient,
+from http_client.base_client import (
+    BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
 )
@@ -47,7 +47,7 @@ class OffersSDK:
     def __init__(
         self,
         api_config: ApiConfig,
-        http_client: Optional[HttpClient] = None,
+        http_client: Optional[BaseHttpClient] = None,
     ) -> None:
         self._http_client = http_client or RequestsClient(
             base_url=api_config.base_url,

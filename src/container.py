@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
 from config import ApiConfig
-from http_client.http_client import HttpClient
+from http_client.base_client import BaseHttpClient
 from http_client.requests_client import RequestsClient
 from offers_sdk import OffersSDK
 
@@ -9,7 +9,7 @@ from offers_sdk import OffersSDK
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    http_client: providers.Singleton[HttpClient] = (
+    http_client: providers.Singleton[BaseHttpClient] = (
         providers.Singleton(
             RequestsClient,
             base_url=config.base_url,

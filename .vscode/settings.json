@@ -11,5 +11,10 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.analysis.extraPaths": ["./src"]
+    "python.analysis.extraPaths": ["./src"],
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "OFFERS_API_BASE_URL": "https://python.exercise.applifting.cz/api/v1",
+        }
+    }
 }

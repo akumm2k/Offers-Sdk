@@ -3,7 +3,7 @@ from typing import Type
 
 import pytest
 
-from http_client.http_client import HttpResponse, JSONType
+from http_client.base_client import HttpResponse, JSONType
 
 
 @pytest.fixture

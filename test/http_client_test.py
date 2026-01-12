@@ -4,8 +4,8 @@ from http import HTTPStatus
 import jwt
 import pytest
 
-from src.http_client.http_client import (
-    HttpClient,
+from http_client.base_client import (
+    BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
     ensure_refresh_token,
@@ -25,7 +25,7 @@ def future_expiry_token() -> str:
     return token
 
 
-class MockClient(HttpClient):
+class MockClient(BaseHttpClient):
     def __init__(
         self,
         refresh_token: str,

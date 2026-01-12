@@ -41,7 +41,7 @@ def ensure_refresh_token(
 ) -> Callable[..., CoroutineType[Any, Any, HttpResponse]]:
     @wraps(http_call)
     async def wrapper(
-        self: HttpClient,
+        self: BaseHttpClient,
         *args: Tuple[Any, ...],
         **kwargs: Dict[str, Any],
     ) -> HttpResponse:
@@ -68,7 +68,7 @@ class HttpResponse:
         )
 
 
-class HttpClient(ABC):
+class BaseHttpClient(ABC):
     def __init__(
         self, *, base_url: str, refresh_token: str, auth_endpoint: str
     ) -> None:

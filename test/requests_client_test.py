@@ -6,7 +6,7 @@ import pytest
 import requests
 from pytest_mock import MockerFixture
 
-from http_client.http_client import HttpClient
+from http_client.base_client import BaseHttpClient
 from http_client.requests_client import RequestsClient
 
 
@@ -19,7 +19,7 @@ class MockResponse:
         return self._json_data
 
 
-async def no_refresh(self: HttpClient) -> None:
+async def no_refresh(self: BaseHttpClient) -> None:
     return None
 
 
@@ -69,7 +69,7 @@ async def test_get(
 ):
     # Arrange
     mocker.patch.object(
-        HttpClient, "_ensure_refresh_token", new=no_refresh
+        BaseHttpClient, "_ensure_refresh_token", new=no_refresh
     )
     get_mock = mocker.patch.object(
         requests.Session,
@@ -134,7 +134,7 @@ async def test_post(
 ):
     # Arrange
     mocker.patch.object(
-        HttpClient, "_ensure_refresh_token", new=no_refresh
+        BaseHttpClient, "_ensure_refresh_token", new=no_refresh
     )
     post_mock = mocker.patch.object(
         requests.Session,

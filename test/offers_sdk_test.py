@@ -11,8 +11,8 @@ from exceptions import (
     ServerError,
     ValidationError,
 )
-from http_client.http_client import (
-    HttpClient,
+from http_client.base_client import (
+    BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
 )
@@ -36,7 +36,7 @@ def offers_sdk(
     return OffersSDK(api_config, http_client=mock_http_client)
 
 
-class MockHttpClient(HttpClient):
+class MockHttpClient(BaseHttpClient):
     async def get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:

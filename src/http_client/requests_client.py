@@ -7,13 +7,13 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from http_client.http_client import (
-    HttpClient,
+from http_client.base_client import (
+    BaseHttpClient,
     HttpResponse,
 )
 
 
-class RequestsClient(HttpClient):
+class RequestsClient(BaseHttpClient):
     def __init__(
         self, base_url: str, refresh_token: str, auth_endpoint: str
     ) -> None:
