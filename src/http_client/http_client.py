@@ -105,16 +105,16 @@ class HttpClient(ABC):
     async def get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     async def post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        pass
+        pass  # pragma: no cover

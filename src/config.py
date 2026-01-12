@@ -20,5 +20,5 @@ class ApiConfig:
         except KeyError as e:
             missing_var = e.args[0]
             raise EnvironmentError(
-                f"Missing required environment variable: {missing_var}"
+                f"Unset environment variable: {missing_var}"
             ) from e

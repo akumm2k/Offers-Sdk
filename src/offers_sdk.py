@@ -69,6 +69,7 @@ class OffersSDK:
     def _validate_register_product_response(
         resp: HttpResponse, product_id: UUID
     ) -> None:
+        OffersSDK._validate_response(resp)
         match resp.status_code:
             case HTTPStatus.CONFLICT:
                 raise ValidationError(
