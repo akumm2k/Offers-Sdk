@@ -1,11 +1,13 @@
-import pytest
 from http import HTTPStatus
-from http_client.requests_client import RequestsClient
-import requests
 from typing import Dict
-from http_client.http_client import HttpClient
-from pytest_mock import MockerFixture
 from urllib.parse import urljoin
+
+import pytest
+import requests
+from pytest_mock import MockerFixture
+
+from http_client.http_client import HttpClient
+from http_client.requests_client import RequestsClient
 
 
 class MockResponse:
@@ -75,12 +77,13 @@ async def test_get(
         return_value=MockResponse(expected_status, expected_json),
     )
 
+    # Act
     client = RequestsClient(
-        base_url=base_url,
-        refresh_token="dummy",
-        auth_endpoint="auth",
+        base_url=base_url, refresh_token="dummy", auth_endpoint="auth"
     )
     resp = await client.get(endpoint, params=params, headers=headers)
+
+    # Assert
     get_mock.assert_called_once_with(
         urljoin(base_url, endpoint),
         params=params,
@@ -122,34 +125,34 @@ _POST_TEST_CASES = [
 )
 async def test_post(
     mocker: MockerFixture,
+    base_url: str,
     endpoint: str,
     data: Dict,
     headers_arg: Dict,
     expected_status: HTTPStatus,
     expected_json: Dict,
 ):
-    def fake_session_post(
-        self, url: str, json: Dict, headers: Dict
-    ) -> MockResponse:
-        assert url.endswith(f"/{endpoint}")
-        assert json == data
-        for key, value in headers.items():
-            assert headers_arg.get(key) == value
-        return MockResponse(expected_status, expected_json)
-
+    # Arrange
     mocker.patch.object(
         HttpClient, "_ensure_refresh_token", new=no_refresh
     )
-    mocker.patch.object(
-        requests.Session, "post", new=fake_session_post
+    post_mock = mocker.patch.object(
+        requests.Session,
+        "post",
+        return_value=MockResponse(expected_status, expected_json),
     )
 
+    # Act
     client = RequestsClient(
-        base_url="https://api.example.com",
-        refresh_token="dummy",
-        auth_endpoint="auth",
+        base_url=base_url, refresh_token="dummy", auth_endpoint="auth"
     )
     resp = await client.post(endpoint, data=data, headers=headers_arg)
 
+    # Assert
+    post_mock.assert_called_once_with(
+        urljoin(base_url, endpoint),
+        json=data,
+        headers=headers_arg,
+    )
     assert resp.status_code == expected_status
     assert resp.json == expected_json

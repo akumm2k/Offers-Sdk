@@ -7,7 +7,11 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from http_client.http_client import HttpClient, HttpResponse, ensure_refresh_token
+from http_client.http_client import (
+    HttpClient,
+    HttpResponse,
+    ensure_refresh_token,
+)
 
 
 class RequestsClient(HttpClient):
