@@ -45,3 +45,7 @@ addopts = "--cov=src --cov-report=term-missing"
 files = "src"
 follow_untyped_imports = false
 ignore_missing_imports = true
+
+
+[project.scripts]
+offers = "questionary_cli.__main__:main"

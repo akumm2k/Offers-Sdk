@@ -1,4 +1,3 @@
-# offers_cli/commands/get_offers.py
 from uuid import UUID
 
 import questionary

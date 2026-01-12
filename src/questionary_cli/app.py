@@ -5,12 +5,12 @@ import questionary
 from dependency_injector.wiring import Provide
 
 from container import Container
-from offers_cli.actions import Actions
-from offers_cli.commands.get_offers import run as get_offers
-from offers_cli.commands.register_product import (
+from offers_sdk.client import OffersClient
+from questionary_cli.actions import Actions
+from questionary_cli.commands.get_offers import run as get_offers
+from questionary_cli.commands.register_product import (
     run as register_product,
 )
-from offers_sdk.client import OffersClient
 
 LOGGER = logging.getLogger(__name__)
 

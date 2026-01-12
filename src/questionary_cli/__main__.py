@@ -3,17 +3,18 @@ import logging
 from dotenv import load_dotenv
 
 from container import Container
-from offers_cli.app import run_cli
 from offers_sdk.config import ApiConfig
+from questionary_cli.app import run_cli
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filename="offers_cli.log",
-    filemode="a",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
 
-if __name__ == "__main__":
+def main() -> None:
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        filename="offers_cli.log",
+        filemode="a",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
     load_dotenv()
     container = Container()
     container.wire(modules=[__name__])
@@ -28,3 +29,7 @@ if __name__ == "__main__":
     )
 
     run_cli()
+
+
+if __name__ == "__main__":
+    main()
