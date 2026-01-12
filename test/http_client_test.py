@@ -4,7 +4,7 @@ from http import HTTPStatus
 import jwt
 import pytest
 
-from http_client.base_client import (
+from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
     TokenRefreshError,

@@ -1,9 +1,9 @@
 from dependency_injector import containers, providers
 
-from config import ApiConfig
-from http_client.base_client import BaseHttpClient
-from http_client.requests_client import RequestsClient
-from offers_sdk import OffersSDK
+from offers_sdk.client import OffersClient
+from offers_sdk.config import ApiConfig
+from offers_sdk.http.base_client import BaseHttpClient
+from offers_sdk.http.requests_client import RequestsClient
 
 
 class Container(containers.DeclarativeContainer):
@@ -23,8 +23,8 @@ class Container(containers.DeclarativeContainer):
         auth_endpoint=config.auth_endpoint,
         refresh_token=config.refresh_token,
     )
-    offers_sdk: providers.Factory[OffersSDK] = providers.Factory(
-        OffersSDK,
+    offers_sdk: providers.Factory[OffersClient] = providers.Factory(
+        OffersClient,
         http_client=http_client,
         base_url=config.base_url,
     )

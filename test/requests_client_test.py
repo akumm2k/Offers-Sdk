@@ -6,8 +6,8 @@ import pytest
 import requests
 from pytest_mock import MockerFixture
 
-from http_client.base_client import BaseHttpClient
-from http_client.requests_client import RequestsClient
+from offers_sdk.http.base_client import BaseHttpClient
+from offers_sdk.http.requests_client import RequestsClient
 
 
 class MockResponse:

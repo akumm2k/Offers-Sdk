@@ -7,7 +7,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from http_client.base_client import (
+from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
 )

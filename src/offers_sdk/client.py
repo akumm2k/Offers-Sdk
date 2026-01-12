@@ -4,19 +4,19 @@ from types import CoroutineType
 from typing import Any, Callable, List, Optional
 from uuid import UUID
 
-from config import ApiConfig
-from exceptions import (
+from offers_sdk.config import ApiConfig
+from offers_sdk.exceptions import (
     AuthenticationError,
     ServerError,
     ValidationError,
 )
-from http_client.base_client import (
+from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
 )
-from http_client.requests_client import RequestsClient
-from models import Offer, Offers, Product, ProductID
+from offers_sdk.http.requests_client import RequestsClient
+from offers_sdk.models import Offer, Offers, Product, ProductID
 
 TOKEN_ERROR_MESSAGES = {
     HTTPStatus.UNAUTHORIZED: "Failed to refresh token",
@@ -43,7 +43,7 @@ def handle_token_refresh_error[T](
     return wrapper
 
 
-class OffersSDK:
+class OffersClient:
     def __init__(
         self,
         api_config: ApiConfig,
@@ -80,14 +80,14 @@ class OffersSDK:
                     f"Product with ID {product_id} already exists",
                     resp,
                 )
-        OffersSDK._validate_response(resp)
+        OffersClient._validate_response(resp)
 
     @handle_token_refresh_error
     async def get_offers(self, product_id: UUID) -> List[Offer]:
         resp = await self._http_client.get(
             f"products/{product_id}/offers"
         )
-        OffersSDK._validate_response(resp)
+        OffersClient._validate_response(resp)
         offers: List[Offer] = Offers.validate_python(
             resp.get_json_as(list)
         )
@@ -103,8 +103,9 @@ class OffersSDK:
             "products/register",
             data=product.model_dump() | id_payload,
         )
-        OffersSDK._validate_register_product_response(
+        OffersClient._validate_register_product_response(
             response, product_id
         )
         data = response.get_json_as(dict)
+        return ProductID(**data)
         return ProductID(**data)

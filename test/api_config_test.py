@@ -3,7 +3,7 @@ from typing import Dict
 import pytest
 from pytest import MonkeyPatch
 
-from config import ApiConfig
+from offers_sdk.config import ApiConfig
 
 
 @pytest.fixture

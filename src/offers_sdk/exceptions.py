@@ -1,6 +1,6 @@
 """Domain Exceptions for the SDK"""
 
-from http_client.base_client import HttpResponse
+from offers_sdk.http.base_client import HttpResponse
 
 
 class SDKError(Exception):

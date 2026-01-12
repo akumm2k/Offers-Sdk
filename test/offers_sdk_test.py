@@ -5,19 +5,19 @@ from uuid import UUID, uuid7
 import pytest
 from pytest_mock import MockerFixture
 
-from config import ApiConfig
-from exceptions import (
+from offers_sdk.client import OffersClient
+from offers_sdk.config import ApiConfig
+from offers_sdk.exceptions import (
     AuthenticationError,
     ServerError,
     ValidationError,
 )
-from http_client.base_client import (
+from offers_sdk.http.base_client import (
     BaseHttpClient,
-    HttpResponse,
     TokenRefreshError,
 )
-from models import Offers, Product
-from offers_sdk import OffersSDK
+from offers_sdk.http.http_response import HttpResponse
+from offers_sdk.models import Offers, Product
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def api_config():
 def offers_sdk(
     api_config: ApiConfig, mock_http_client: MockHttpClient
 ):
-    return OffersSDK(api_config, http_client=mock_http_client)
+    return OffersClient(api_config, http_client=mock_http_client)
 
 
 class MockHttpClient(BaseHttpClient):
@@ -173,7 +173,7 @@ async def test_get_offers_authentication_error(
 @pytest.mark.asyncio
 async def test_get_offers_validation_error(
     mocker: MockerFixture,
-    offers_sdk: OffersSDK,
+    offers_sdk: OffersClient,
     mock_http_client: MockHttpClient,
 ):
     # Arrange
@@ -244,7 +244,7 @@ async def test_register_product_validation_error_conflict(
 @pytest.mark.asyncio
 async def test_token_refresh_error_handling(
     mocker: MockerFixture,
-    offers_sdk: OffersSDK,
+    offers_sdk: OffersClient,
     mock_http_client: MockHttpClient,
 ):
     # Arrange

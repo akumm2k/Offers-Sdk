@@ -7,25 +7,13 @@ from typing import (
     Any,
     Callable,
     Dict,
-    List,
-    Mapping,
     Optional,
     Tuple,
-    Type,
-    TypeAlias,
 )
 
 import jwt
 
-JSONType: TypeAlias = (
-    Mapping[str, "JSONType"]
-    | List["JSONType"]
-    | int
-    | str
-    | float
-    | bool
-    | None
-)
+from offers_sdk.http.http_response import HttpResponse
 
 
 class TokenRefreshError(Exception):
@@ -49,23 +37,6 @@ def ensure_refresh_token(
         return await http_call(self, *args, **kwargs)
 
     return wrapper
-
-
-class HttpResponse:
-    def __init__(
-        self,
-        status_code: HTTPStatus,
-        json: JSONType,
-    ):
-        self.status_code = status_code
-        self.json = json
-
-    def get_json_as[T](self, _type: Type[T]) -> T:
-        if isinstance(self.json, _type):
-            return self.json
-        raise ValueError(
-            f"Response JSON is not a {_type.__name__}, but {type(self.json).__name__}"
-        )
 
 
 class BaseHttpClient(ABC):
@@ -131,4 +102,5 @@ class BaseHttpClient(ABC):
     async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
+        pass  # pragma: no cover
         pass  # pragma: no cover
