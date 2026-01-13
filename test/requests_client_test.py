@@ -33,6 +33,16 @@ def base_url() -> str:
     return "https://api.example.com/api/v1/"
 
 
+@pytest.fixture
+def requests_client(base_url: str) -> RequestsClient:
+    return RequestsClient(
+        base_url=base_url,
+        refresh_token="dummy",
+        auth_endpoint="auth",
+        persistent_auth_token_key="",
+    )
+
+
 _GET_TEST_CASES = [
     (
         "offers",
@@ -66,6 +76,7 @@ _GET_TEST_CASES = [
 async def test_get(
     mocker: MockerFixture,
     base_url: str,
+    requests_client: RequestsClient,
     endpoint: str,
     params: Dict,
     headers: Dict,
@@ -83,10 +94,9 @@ async def test_get(
     )
 
     # Act
-    client = RequestsClient(
-        base_url=base_url, refresh_token="dummy", auth_endpoint="auth"
+    resp = await requests_client.get(
+        endpoint, params=params, headers=headers
     )
-    resp = await client.get(endpoint, params=params, headers=headers)
 
     # Assert
     get_mock.assert_called_once_with(
@@ -131,6 +141,7 @@ _POST_TEST_CASES = [
 async def test_post(
     mocker: MockerFixture,
     base_url: str,
+    requests_client: RequestsClient,
     endpoint: str,
     data: Dict,
     headers_arg: Dict,
@@ -148,10 +159,9 @@ async def test_post(
     )
 
     # Act
-    client = RequestsClient(
-        base_url=base_url, refresh_token="dummy", auth_endpoint="auth"
+    resp = await requests_client.post(
+        endpoint, data=data, headers=headers_arg
     )
-    resp = await client.post(endpoint, data=data, headers=headers_arg)
 
     # Assert
     post_mock.assert_called_once_with(
@@ -160,5 +170,4 @@ async def test_post(
         headers=headers_arg,
     )
     assert resp.status_code == expected_status
-    assert resp.json == expected_json
     assert resp.json == expected_json

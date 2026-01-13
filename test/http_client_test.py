@@ -1,3 +1,11 @@
+"""
+TODO: Add tests for auth token provision
+    Test cases:
+    1. loading valid auth token from keyring on init
+    2. not loading expired auth token from keyring on init
+    3. saving auth token to keyring after refresh
+"""
+
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 
@@ -35,6 +43,7 @@ class MockClient(BaseHttpClient):
             base_url="http://testserver",
             refresh_token=refresh_token,
             auth_endpoint=auth_endpoint,
+            persistent_auth_token_key="",
         )
         self._future_token = future_token
 

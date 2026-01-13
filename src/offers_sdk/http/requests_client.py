@@ -15,12 +15,18 @@ from offers_sdk.http.base_client import (
 
 class RequestsClient(BaseHttpClient):
     def __init__(
-        self, base_url: str, refresh_token: str, auth_endpoint: str
+        self,
+        *,
+        base_url: str,
+        refresh_token: str,
+        auth_endpoint: str,
+        persistent_auth_token_key: str,
     ) -> None:
         super().__init__(
             base_url=base_url,
             refresh_token=refresh_token,
             auth_endpoint=auth_endpoint,
+            persistent_auth_token_key=persistent_auth_token_key,
         )
         adapter = HTTPAdapter(
             max_retries=Retry(

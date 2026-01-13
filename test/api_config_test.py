@@ -9,9 +9,10 @@ from offers_sdk.config import ApiConfig
 @pytest.fixture
 def env_vars() -> Dict:
     return {
-        "OFFERS_API_BASE_URL": "https://api.example.com",
-        "AUTH_ENDPOINT": "https://auth.example.com",
-        "REFRESH_TOKEN": "secret_token_123",
+        ApiConfig.BASE_URL_ENV_KEY: "https://api.example.com",
+        ApiConfig.AUTH_ENDPOINT_ENV_KEY: "https://auth.example.com",
+        ApiConfig.REFRESH_TOKEN_ENV_KEY: "secret_token_123",
+        ApiConfig.PERSISTENT_AUTH_TOKEN_KEY: "test-auth-token-key",
     }
 
 
@@ -27,11 +28,17 @@ def test_from_env_loads_config_successfully(
     assert config.base_url == "https://api.example.com"
     assert config.auth_endpoint == "https://auth.example.com"
     assert config.refresh_token == "secret_token_123"
+    assert config.persistent_auth_token_key == "test-auth-token-key"
 
 
 @pytest.mark.parametrize(
     "missing_var",
-    ["OFFERS_API_BASE_URL", "AUTH_ENDPOINT", "REFRESH_TOKEN"],
+    [
+        ApiConfig.BASE_URL_ENV_KEY,
+        ApiConfig.AUTH_ENDPOINT_ENV_KEY,
+        ApiConfig.REFRESH_TOKEN_ENV_KEY,
+        ApiConfig.PERSISTENT_AUTH_TOKEN_KEY,
+    ],
 )
 def test_from_env_raises_error_for_missing_variable(
     monkeypatch: MonkeyPatch, env_vars: Dict, missing_var: str

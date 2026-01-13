@@ -27,6 +27,7 @@ def api_config():
         base_url="https://api.example.com",
         auth_endpoint="/auth",
         refresh_token="test-refresh-token",
+        persistent_auth_token_key="",
     )
 
 
@@ -54,11 +55,12 @@ class MockHttpClient(BaseHttpClient):
 
 
 @pytest.fixture
-def mock_http_client() -> MockHttpClient:
+def mock_http_client(api_config: ApiConfig) -> MockHttpClient:
     return MockHttpClient(
-        base_url="https://api.example.com",
-        refresh_token="test-refresh-token",
-        auth_endpoint="/auth",
+        base_url=api_config.base_url,
+        refresh_token=api_config.refresh_token,
+        auth_endpoint=api_config.auth_endpoint,
+        persistent_auth_token_key=api_config.persistent_auth_token_key,  # noqa: E501
     )
 
 

@@ -15,6 +15,7 @@ class Container(containers.DeclarativeContainer):
             base_url=config.base_url,
             refresh_token=config.refresh_token,
             auth_endpoint=config.auth_endpoint,
+            persistent_auth_token_key=config.persistent_auth_token_key,  # noqa: E501
         )
     )
     api_config: providers.Singleton[ApiConfig] = providers.Singleton(
@@ -22,6 +23,7 @@ class Container(containers.DeclarativeContainer):
         base_url=config.base_url,
         auth_endpoint=config.auth_endpoint,
         refresh_token=config.refresh_token,
+        persistent_auth_token_key=config.persistent_auth_token_key,
     )
     offers_client: providers.Factory[OffersClient] = (
         providers.Factory(
