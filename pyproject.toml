@@ -52,6 +52,9 @@ files = "src"
 follow_untyped_imports = false
 ignore_missing_imports = true
 
+[build-system]
+requires = ["hatchling>=1.28.0"]
+build-backend = "hatchling.build"
 
 [project.scripts]
 offers = "questionary_cli.__main__:main"
