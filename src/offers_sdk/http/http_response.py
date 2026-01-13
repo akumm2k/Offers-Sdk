@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from http import HTTPStatus
 from typing import List, Mapping, Type, TypeAlias
 
@@ -12,14 +13,10 @@ JSONType: TypeAlias = (
 )
 
 
+@dataclass(frozen=True)
 class HttpResponse:
-    def __init__(
-        self,
-        status_code: HTTPStatus,
-        json: JSONType,
-    ):
-        self.status_code = status_code
-        self.json = json
+    status_code: HTTPStatus
+    json: JSONType
 
     def get_json_as[T](self, _type: Type[T]) -> T:
         if isinstance(self.json, _type):
