@@ -71,7 +71,7 @@ class MockClient(BaseHttpClient):
 
 class TestHttpClientTokenRefresh:
     @pytest.mark.asyncio
-    async def test_should_refresh_expired_token(
+    async def test_should_refresh_missing_auth_token(
         self, future_expiry_token: str
     ):
         # Arrange
@@ -87,6 +87,51 @@ class TestHttpClientTokenRefresh:
         # Assert
         assert client._access_token == future_expiry_token
         assert client._token_expiry > datetime.now(timezone.utc)
+
+    @pytest.mark.asyncio
+    async def test_should_refresh_expired_auth_token(
+        self, future_expiry_token: str
+    ):
+        # Arrange
+        client = MockClient(
+            refresh_token=_VALID_REFRESH_TOKEN,
+            auth_endpoint="auth",
+            future_token=future_expiry_token,
+        )
+        # Manually set an expired token
+        client._access_token = "expired_token"
+        client._token_expiry = datetime.now(timezone.utc) - timedelta(
+            minutes=5
+        )
+
+        # Act
+        await client.get("data")
+
+        # Assert
+        assert client._access_token == future_expiry_token
+        assert client._token_expiry > datetime.now(timezone.utc)
+
+    @pytest.mark.asyncio
+    async def test_should_not_refresh_valid_auth_token(
+        self, future_expiry_token: str
+    ):
+        # Arrange
+        client = MockClient(
+            refresh_token=_VALID_REFRESH_TOKEN,
+            auth_endpoint="auth",
+            future_token=future_expiry_token,
+        )
+        # Manually set a valid token
+        client._access_token = future_expiry_token
+        client._token_expiry = datetime.now(timezone.utc) + timedelta(
+            minutes=30
+        )
+
+        # Act
+        await client.get("data")
+
+        # Assert
+        assert client._access_token == future_expiry_token
 
     @pytest.mark.asyncio
     async def test_should_throw_on_invalid_refresh_token(
