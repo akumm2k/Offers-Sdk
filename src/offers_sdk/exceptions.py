@@ -1,16 +1,21 @@
-"""Domain Exceptions for the SDK"""
+from typing import Optional
 
 from offers_sdk.http.base_client import HttpResponse
 
 
 class SDKError(Exception):
     def __init__(
-        self, msg: str, http_response: HttpResponse, *args: object
+        self,
+        msg: str,
+        http_response: Optional[HttpResponse] = None,
+        *args: object,
     ) -> None:
-        self.http_response = http_response
-
-        msg_with_status = f"{msg}\nHTTP Status: {http_response.status_code}\nResponse JSON: {http_response.json}"
-        super().__init__(msg_with_status, *args)
+        if http_response:
+            msg = (
+                f"{msg}\nHTTP Status: {http_response.status_code}"
+                f"\nResponse JSON: {http_response.json}"
+            )
+        super().__init__(msg, *args)
 
 
 class ServerError(SDKError):

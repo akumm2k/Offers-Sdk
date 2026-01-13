@@ -9,11 +9,6 @@ from offers_sdk.http.http_response import (
 )
 
 
-@pytest.fixture
-def sample_json() -> dict:
-    return {"key1": "value1", "key2": 2, "key3": [1, 2, 3]}
-
-
 @pytest.mark.parametrize(
     "json_type,json_data",
     [

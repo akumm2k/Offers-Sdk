@@ -37,15 +37,19 @@ def offers_sdk(
 
 
 class MockHttpClient(BaseHttpClient):
+    """
+    We patch the get and post methods in tests, so these are not implemented.
+    """
+
     async def _unauthenticated_get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     async def _unauthenticated_post(
         self, endpoint: str, data: Dict = {}, headers: Dict = {}
     ) -> HttpResponse:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 @pytest.fixture

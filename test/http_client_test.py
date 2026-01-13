@@ -38,11 +38,14 @@ class MockClient(BaseHttpClient):
         )
         self._future_token = future_token
 
+    def _is_token_expired(self) -> bool:
+        return self._access_token != self._future_token
+
     async def _unauthenticated_get(
         self, endpoint: str, params: dict = {}, headers: dict = {}
     ) -> HttpResponse:
-        if self._access_token is None:
-            return HttpResponse(
+        if self._is_token_expired():
+            return HttpResponse(  # pragma: no cover
                 status_code=HTTPStatus.UNAUTHORIZED, json={}
             )
         return HttpResponse(
@@ -53,7 +56,7 @@ class MockClient(BaseHttpClient):
         self, endpoint: str, data: dict = {}, headers: dict = {}
     ) -> HttpResponse:
         if endpoint != self._auth_endpoint:
-            return HttpResponse(
+            return HttpResponse(  # pragma: no cover
                 status_code=HTTPStatus.NOT_FOUND, json={}
             )
         if self._refresh_token != _VALID_REFRESH_TOKEN:
@@ -64,15 +67,6 @@ class MockClient(BaseHttpClient):
             status_code=HTTPStatus.CREATED,
             json={"access_token": self._future_token},
         )
-
-    async def post(
-        self, endpoint: str, data: dict = {}, headers: dict = {}
-    ) -> HttpResponse:
-        if self._access_token is None:
-            return HttpResponse(
-                status_code=HTTPStatus.UNAUTHORIZED, json={}
-            )
-        return HttpResponse(status_code=HTTPStatus.OK, json={})
 
 
 class TestHttpClientTokenRefresh:
