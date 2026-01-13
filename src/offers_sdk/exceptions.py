@@ -15,7 +15,7 @@ class SDKError(Exception):
             msg = "\n".join(
                 [
                     msg,
-                    f"{http_response=}",
+                    f"with {http_response}",
                 ]
             )
         super().__init__(msg, *args, **kwargs)

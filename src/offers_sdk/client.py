@@ -6,6 +6,7 @@ from uuid import UUID
 from offers_sdk.config import ApiConfig
 from offers_sdk.exceptions import (
     AuthenticationError,
+    SDKError,
     ServerError,
     ValidationError,
 )
@@ -67,7 +68,7 @@ class OffersClient:
             case code if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
                 raise ServerError("Server error", resp)
             case code if not code.is_success:
-                raise Exception("Unexpected error", resp)
+                raise SDKError("Unexpected error", resp)
 
     @staticmethod
     def _validate_register_product_response(

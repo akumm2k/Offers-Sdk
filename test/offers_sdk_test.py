@@ -9,6 +9,7 @@ from offers_sdk.client import OffersClient
 from offers_sdk.config import ApiConfig
 from offers_sdk.exceptions import (
     AuthenticationError,
+    SDKError,
     ServerError,
     ValidationError,
 )
@@ -265,4 +266,27 @@ async def test_token_refresh_error_handling(
     with pytest.raises(
         AuthenticationError, match="Bad authentication"
     ):
+        await offers_sdk.get_offers(product_id)
+
+
+@pytest.mark.asyncio
+async def test_unexpected_api_error_handling(
+    mocker: MockerFixture,
+    offers_sdk: OffersClient,
+    mock_http_client: MockHttpClient,
+):
+    # Arrange
+    product_id = uuid7()
+
+    mocker.patch.object(
+        mock_http_client,
+        "get",
+        return_value=HttpResponse(
+            status_code=HTTPStatus.IM_A_TEAPOT,
+            json={},
+        ),
+    )
+
+    # Act & Assert
+    with pytest.raises(SDKError, match="Unexpected error"):
         await offers_sdk.get_offers(product_id)
