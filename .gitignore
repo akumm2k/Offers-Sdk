@@ -19,10 +19,11 @@ htmlcov/
 # Generated SDK
 python-exercise-client
 
-
 # CLI logs
 **/*.log
 
-
 # Rest client files
 httprequests/
+
+# MacOS files
+**/*.DS_Store
