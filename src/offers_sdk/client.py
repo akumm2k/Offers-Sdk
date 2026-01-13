@@ -1,7 +1,6 @@
 import uuid
 from http import HTTPStatus
-from types import CoroutineType
-from typing import Any, Callable, List, Optional
+from typing import Awaitable, Callable, List, Optional
 from uuid import UUID
 
 from offers_sdk.config import ApiConfig
@@ -26,8 +25,8 @@ TOKEN_ERROR_MESSAGES = {
 
 
 def handle_token_refresh_error[T](
-    decorated_func: Callable[..., CoroutineType[Any, Any, T]],
-) -> Callable[..., CoroutineType[Any, Any, T]]:
+    decorated_func: Callable[..., Awaitable[T]],
+) -> Callable[..., Awaitable[T]]:
     async def wrapper[**P](*args: P.args, **kwargs: P.kwargs) -> T:
         try:
             return await decorated_func(*args, **kwargs)
