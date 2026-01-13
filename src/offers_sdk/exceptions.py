@@ -11,9 +11,11 @@ class SDKError(Exception):
         *args: object,
     ) -> None:
         if http_response:
-            msg = (
-                f"{msg}\nHTTP Status: {http_response.status_code}"
-                f"\nResponse JSON: {http_response.json}"
+            msg = "\n".join(
+                [
+                    msg,
+                    f"{http_response=}",
+                ]
             )
         super().__init__(msg, *args)
 
