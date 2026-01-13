@@ -9,6 +9,7 @@ class SDKError(Exception):
         msg: str,
         http_response: Optional[HttpResponse] = None,
         *args: object,
+        **kwargs: object,
     ) -> None:
         if http_response:
             msg = "\n".join(
@@ -17,7 +18,7 @@ class SDKError(Exception):
                     f"{http_response=}",
                 ]
             )
-        super().__init__(msg, *args)
+        super().__init__(msg, *args, **kwargs)
 
 
 class ServerError(SDKError):

@@ -24,10 +24,10 @@ TOKEN_ERROR_MESSAGES = {
 }
 
 
-def handle_token_refresh_error[T](
-    decorated_func: Callable[..., Awaitable[T]],
-) -> Callable[..., Awaitable[T]]:
-    async def wrapper[**P](*args: P.args, **kwargs: P.kwargs) -> T:
+def handle_token_refresh_error[**P, T](
+    decorated_func: Callable[P, Awaitable[T]],
+) -> Callable[P, Awaitable[T]]:
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         try:
             return await decorated_func(*args, **kwargs)
         except TokenRefreshError as exc:
