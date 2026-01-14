@@ -5,7 +5,7 @@ import questionary
 from offers_sdk.client import OffersClient
 
 
-async def run(client: OffersClient):
+async def run(client: OffersClient) -> None:
     product_id_str = await questionary.text(
         "Product ID: "
     ).ask_async()

@@ -3,7 +3,7 @@ import questionary
 from offers_sdk.models import Product
 
 
-async def run(client):
+async def run(client) -> None:
     name = await questionary.text("Product name:").ask_async()
     description = await questionary.text(
         "Product description:"
