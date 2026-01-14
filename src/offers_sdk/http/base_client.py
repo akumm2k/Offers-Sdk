@@ -21,6 +21,9 @@ class TokenRefreshError(Exception):
 
 
 class BaseHttpClient(ABC):
+    _ACCESS_TOKEN_HEADER_KEY = "Bearer"
+    _REFRESH_TOKEN_HEADER_KEY = "Bearer"
+
     def __init__(
         self,
         *,
@@ -34,10 +37,22 @@ class BaseHttpClient(ABC):
         self._auth_endpoint = auth_endpoint
         self._default_headers: Dict[str, str] = {}
         self._token_manager = token_manager
+        self._update_headers_with_token_on_load()
+
+    def _update_headers_with_token_on_load(self) -> None:
+        if not self._token_manager.is_current_token_expired():
+            assert (
+                token := self._token_manager.get_token()
+            ) is not None
+            self._default_headers[
+                BaseHttpClient._ACCESS_TOKEN_HEADER_KEY
+            ] = token
 
     def _update_auth_token(self, token: str) -> None:
         self._token_manager.update_auth_token(token, save=True)
-        self._default_headers["Bearer"] = token
+        self._default_headers[
+            BaseHttpClient._ACCESS_TOKEN_HEADER_KEY
+        ] = token
 
     async def _ensure_refresh_token(self) -> None:
         if self._token_manager.is_current_token_expired():
@@ -46,7 +61,9 @@ class BaseHttpClient(ABC):
     async def _refresh_access_token(self) -> None:
         resp = await self._unauthenticated_post(
             self._auth_endpoint,
-            headers={"Bearer": self._refresh_token},
+            headers={
+                BaseHttpClient._REFRESH_TOKEN_HEADER_KEY: self._refresh_token
+            },
         )
 
         if resp.status_code.is_success:

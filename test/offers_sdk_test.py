@@ -99,7 +99,9 @@ async def test_get_offers(
     )
 
     mocked_get = mocker.patch.object(
-        mock_http_client, "get", return_value=http_response
+        mock_http_client,
+        mock_http_client.get.__name__,
+        return_value=http_response,
     )
 
     # Act
@@ -139,7 +141,9 @@ async def test_register_product(
         json=response_data,
     )
     mocked_post = mocker.patch.object(
-        mock_http_client, "post", return_value=http_response
+        mock_http_client,
+        mock_http_client.post.__name__,
+        return_value=http_response,
     )
 
     # Act
@@ -167,7 +171,9 @@ async def test_get_offers_authentication_error(
     )
 
     mocker.patch.object(
-        mock_http_client, "get", return_value=http_response
+        mock_http_client,
+        mock_http_client.get.__name__,
+        return_value=http_response,
     )
 
     # Act & Assert
@@ -192,7 +198,9 @@ async def test_get_offers_validation_error(
     )
 
     mocker.patch.object(
-        mock_http_client, "get", return_value=http_response
+        mock_http_client,
+        mock_http_client.get.__name__,
+        return_value=http_response,
     )
 
     # Act & Assert
@@ -214,7 +222,9 @@ async def test_get_offers_server_error(
     )
 
     mocker.patch.object(
-        mock_http_client, "get", return_value=http_response
+        mock_http_client,
+        mock_http_client.get.__name__,
+        return_value=http_response,
     )
 
     # Act & Assert
@@ -240,7 +250,9 @@ async def test_register_product_validation_error_conflict(
     )
 
     mocker.patch.object(
-        mock_http_client, "post", return_value=http_response
+        mock_http_client,
+        mock_http_client.post.__name__,
+        return_value=http_response,
     )
 
     # Act & Assert
@@ -259,7 +271,7 @@ async def test_token_refresh_error_handling(
 
     mocker.patch.object(
         mock_http_client,
-        "get",
+        mock_http_client.get.__name__,
         side_effect=TokenRefreshError(
             "Token refresh failed",
             HttpResponse(
@@ -287,7 +299,7 @@ async def test_unexpected_api_error_handling(
 
     mocker.patch.object(
         mock_http_client,
-        "get",
+        mock_http_client.get.__name__,
         return_value=HttpResponse(
             status_code=HTTPStatus.IM_A_TEAPOT,
             json={},

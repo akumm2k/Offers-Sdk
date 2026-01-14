@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from functools import lru_cache
@@ -5,14 +6,18 @@ from typing import Optional
 
 import jwt
 
+LOGGER = logging.getLogger(__name__)
+
 
 class AuthTokenManager(ABC):
     def __init__(self) -> None:
         super().__init__()
         token = self.get_token()
         if token and self._is_string_valid_token(token):
+            LOGGER.debug("Loaded valid token from storage.")
             self.update_auth_token(token)
         else:
+            LOGGER.debug("No valid token found in storage.")
             self._access_token: Optional[str] = None
             self._token_expiry: datetime = datetime.min.replace(
                 tzinfo=timezone.utc

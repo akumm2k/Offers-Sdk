@@ -4,6 +4,7 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import requests
+import requests_cache
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -17,6 +18,25 @@ from offers_sdk.http.base_client import (
 
 
 class RequestsClient(BaseHttpClient):
+    _ADAPTER: HTTPAdapter = HTTPAdapter(
+        max_retries=Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[
+                HTTPStatus.TOO_MANY_REQUESTS,
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                HTTPStatus.BAD_GATEWAY,
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                HTTPStatus.GATEWAY_TIMEOUT,
+            ],
+            allowed_methods=["GET", "POST"],
+        )
+    )
+
+    @staticmethod
+    def filter_out_auth_response(resp: requests.Response) -> bool:
+        return not resp.url.endswith("/auth")
+
     def __init__(
         self,
         *,
@@ -31,22 +51,19 @@ class RequestsClient(BaseHttpClient):
             auth_endpoint=auth_endpoint,
             token_manager=token_manager,
         )
-        adapter = HTTPAdapter(
-            max_retries=Retry(
-                total=3,
-                backoff_factor=1,
-                status_forcelist=[
-                    HTTPStatus.TOO_MANY_REQUESTS,
-                    HTTPStatus.INTERNAL_SERVER_ERROR,
-                    HTTPStatus.BAD_GATEWAY,
-                    HTTPStatus.SERVICE_UNAVAILABLE,
-                    HTTPStatus.GATEWAY_TIMEOUT,
-                ],
-                allowed_methods=["GET", "POST"],
-            )
+        self._session = requests_cache.CachedSession(
+            cache_name="offers_http_cache",
+            backend="filesystem",
+            cache_control=True,
+            expire_after=60 * 5,
+            ignored_params=[
+                BaseHttpClient._ACCESS_TOKEN_HEADER_KEY,
+                BaseHttpClient._REFRESH_TOKEN_HEADER_KEY,
+            ],
+            serializer="json",
+            filter_fn=RequestsClient.filter_out_auth_response,
         )
-        self._session = requests.Session()
-        self._session.mount("https://", adapter)
+        self._session.mount("https://", RequestsClient._ADAPTER)
 
     async def _unauthenticated_get(
         self, endpoint: str, params: Dict = {}, headers: Dict = {}

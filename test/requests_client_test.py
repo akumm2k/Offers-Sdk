@@ -3,8 +3,8 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import pytest
-import requests
 from pytest_mock import MockerFixture
+from requests_cache import CachedSession as Session
 
 from offers_sdk.http.auth_token.auth_token_manager import (
     AuthTokenManager,
@@ -37,14 +37,19 @@ def base_url() -> str:
 
 
 @pytest.fixture
+def token_manager(mocker: MockerFixture) -> AuthTokenManager:
+    return mocker.Mock(spec=AuthTokenManager)
+
+
+@pytest.fixture
 def requests_client(
-    base_url: str, mocker: MockerFixture
+    base_url: str, token_manager: AuthTokenManager
 ) -> RequestsClient:
     return RequestsClient(
         base_url=base_url,
         refresh_token="dummy",
         auth_endpoint="auth",
-        token_manager=mocker.Mock(spec=AuthTokenManager),
+        token_manager=token_manager,
     )
 
 
@@ -82,6 +87,7 @@ async def test_get(
     mocker: MockerFixture,
     base_url: str,
     requests_client: RequestsClient,
+    token_manager: AuthTokenManager,
     endpoint: str,
     params: Dict,
     headers: Dict,
@@ -90,11 +96,13 @@ async def test_get(
 ):
     # Arrange
     mocker.patch.object(
-        BaseHttpClient, "_ensure_refresh_token", new=no_refresh
+        token_manager,
+        AuthTokenManager.is_current_token_expired.__name__,
+        return_value=False,
     )
     get_mock = mocker.patch.object(
-        requests.Session,
-        "get",
+        Session,
+        Session.get.__name__,
         return_value=MockResponse(expected_status, expected_json),
     )
 
@@ -147,6 +155,7 @@ async def test_post(
     mocker: MockerFixture,
     base_url: str,
     requests_client: RequestsClient,
+    token_manager: AuthTokenManager,
     endpoint: str,
     data: Dict,
     headers_arg: Dict,
@@ -155,11 +164,13 @@ async def test_post(
 ):
     # Arrange
     mocker.patch.object(
-        BaseHttpClient, "_ensure_refresh_token", new=no_refresh
+        token_manager,
+        AuthTokenManager.is_current_token_expired.__name__,
+        return_value=False,
     )
     post_mock = mocker.patch.object(
-        requests.Session,
-        "post",
+        Session,
+        Session.post.__name__,
         return_value=MockResponse(expected_status, expected_json),
     )
 

@@ -27,3 +27,6 @@ httprequests/
 
 # MacOS files
 **/*.DS_Store
+
+# HTTP cache files
+offers_http_cache/

@@ -19,6 +19,6 @@ async def run(client: OffersClient):
     print(f"Offers for product {product_id}:")
     for offer in offers:
         questionary.print(
-            f"{offer.id}: {offer.price}",
+            f"{offer.id}: {offer.price}: {offer.items_in_stock}",
             style="bold fg:green bg:black underline",
         )
