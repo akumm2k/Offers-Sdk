@@ -10,6 +10,9 @@ from offers_sdk.exceptions import (
     ServerError,
     ValidationError,
 )
+from offers_sdk.http.auth_token.keyring_token_manager import (
+    KeyringTokenManager,
+)
 from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
@@ -53,7 +56,9 @@ class OffersClient:
             base_url=api_config.base_url,
             refresh_token=api_config.refresh_token,
             auth_endpoint=api_config.auth_endpoint,
-            persistent_auth_token_key=api_config.persistent_auth_token_key,  # noqa: E501
+            token_manager=KeyringTokenManager(
+                token_key=api_config.persistent_auth_token_key
+            ),
         )
         self._api_config = api_config
 

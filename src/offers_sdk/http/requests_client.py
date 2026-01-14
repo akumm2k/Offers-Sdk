@@ -7,6 +7,9 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from offers_sdk.http.auth_token.auth_token_manager import (
+    AuthTokenManager,
+)
 from offers_sdk.http.base_client import (
     BaseHttpClient,
     HttpResponse,
@@ -20,13 +23,13 @@ class RequestsClient(BaseHttpClient):
         base_url: str,
         refresh_token: str,
         auth_endpoint: str,
-        persistent_auth_token_key: str,
+        token_manager: AuthTokenManager,
     ) -> None:
         super().__init__(
             base_url=base_url,
             refresh_token=refresh_token,
             auth_endpoint=auth_endpoint,
-            persistent_auth_token_key=persistent_auth_token_key,
+            token_manager=token_manager,
         )
         adapter = HTTPAdapter(
             max_retries=Retry(

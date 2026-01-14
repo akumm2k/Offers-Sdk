@@ -6,6 +6,9 @@ import pytest
 import requests
 from pytest_mock import MockerFixture
 
+from offers_sdk.http.auth_token.auth_token_manager import (
+    AuthTokenManager,
+)
 from offers_sdk.http.base_client import BaseHttpClient
 from offers_sdk.http.http_response import JSONType
 from offers_sdk.http.requests_client import RequestsClient
@@ -34,12 +37,14 @@ def base_url() -> str:
 
 
 @pytest.fixture
-def requests_client(base_url: str) -> RequestsClient:
+def requests_client(
+    base_url: str, mocker: MockerFixture
+) -> RequestsClient:
     return RequestsClient(
         base_url=base_url,
         refresh_token="dummy",
         auth_endpoint="auth",
-        persistent_auth_token_key="",
+        token_manager=mocker.Mock(spec=AuthTokenManager),
     )
 
 
