@@ -20,7 +20,7 @@ from offers_sdk.http.base_client import (
     BaseHttpClient,
     TokenRefreshError,
 )
-from offers_sdk.http.http_response import HttpResponse
+from offers_sdk.http.http_response import HttpResponse, JSONType
 from offers_sdk.models import Offers, Product
 
 
@@ -36,12 +36,12 @@ def api_config():
 
 @pytest.fixture
 def offers_sdk(
-    api_config: ApiConfig, mock_http_client: MockHttpClient
-):
-    return OffersClient(api_config, http_client=mock_http_client)
+    api_config: ApiConfig, http_client_stub: HttpClientStub
+) -> OffersClient:
+    return OffersClient(api_config, http_client=http_client_stub)
 
 
-class MockHttpClient(BaseHttpClient):
+class HttpClientStub(BaseHttpClient):
     """
     We patch the get and post methods in tests, so these are not implemented.
     """
@@ -58,10 +58,10 @@ class MockHttpClient(BaseHttpClient):
 
 
 @pytest.fixture
-def mock_http_client(
+def http_client_stub(
     api_config: ApiConfig, mocker: MockerFixture
-) -> MockHttpClient:
-    return MockHttpClient(
+) -> HttpClientStub:
+    return HttpClientStub(
         base_url=api_config.base_url,
         refresh_token=api_config.refresh_token,
         auth_endpoint=api_config.auth_endpoint,
@@ -85,9 +85,9 @@ def mock_http_client(
 )
 async def test_get_offers(
     mocker: MockerFixture,
-    offers_sdk,
-    mock_http_client: MockHttpClient,
-    response_data,
+    offers_sdk: OffersClient,
+    http_client_stub: HttpClientStub,
+    response_data: JSONType,
 ):
     # Arrange
     product_id = uuid7()
@@ -99,8 +99,8 @@ async def test_get_offers(
     )
 
     mocked_get = mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         return_value=http_response,
     )
 
@@ -127,8 +127,8 @@ async def test_get_offers(
 )
 async def test_register_product(
     mocker: MockerFixture,
-    offers_sdk,
-    mock_http_client: MockHttpClient,
+    offers_sdk: OffersClient,
+    http_client_stub: HttpClientStub,
     product: Product,
 ):
     # Arrange
@@ -141,8 +141,8 @@ async def test_register_product(
         json=response_data,
     )
     mocked_post = mocker.patch.object(
-        mock_http_client,
-        mock_http_client.post.__name__,
+        http_client_stub,
+        http_client_stub.post.__name__,
         return_value=http_response,
     )
 
@@ -160,8 +160,8 @@ async def test_register_product(
 @pytest.mark.asyncio
 async def test_get_offers_authentication_error(
     mocker: MockerFixture,
-    offers_sdk,
-    mock_http_client: MockHttpClient,
+    offers_sdk: OffersClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product_id = uuid7()
@@ -171,8 +171,8 @@ async def test_get_offers_authentication_error(
     )
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         return_value=http_response,
     )
 
@@ -187,7 +187,7 @@ async def test_get_offers_authentication_error(
 async def test_get_offers_validation_error(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    mock_http_client: MockHttpClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product_id = uuid7()
@@ -198,8 +198,8 @@ async def test_get_offers_validation_error(
     )
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         return_value=http_response,
     )
 
@@ -211,8 +211,8 @@ async def test_get_offers_validation_error(
 @pytest.mark.asyncio
 async def test_get_offers_server_error(
     mocker: MockerFixture,
-    offers_sdk,
-    mock_http_client: MockHttpClient,
+    offers_sdk: OffersClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product_id = uuid7()
@@ -222,8 +222,8 @@ async def test_get_offers_server_error(
     )
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         return_value=http_response,
     )
 
@@ -235,8 +235,8 @@ async def test_get_offers_server_error(
 @pytest.mark.asyncio
 async def test_register_product_validation_error_conflict(
     mocker: MockerFixture,
-    offers_sdk,
-    mock_http_client: MockHttpClient,
+    offers_sdk: OffersClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product = Product(
@@ -250,8 +250,8 @@ async def test_register_product_validation_error_conflict(
     )
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.post.__name__,
+        http_client_stub,
+        http_client_stub.post.__name__,
         return_value=http_response,
     )
 
@@ -264,14 +264,14 @@ async def test_register_product_validation_error_conflict(
 async def test_token_refresh_error_handling(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    mock_http_client: MockHttpClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product_id = uuid7()
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         side_effect=TokenRefreshError(
             "Token refresh failed",
             HttpResponse(
@@ -292,14 +292,14 @@ async def test_token_refresh_error_handling(
 async def test_unexpected_api_error_handling(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    mock_http_client: MockHttpClient,
+    http_client_stub: HttpClientStub,
 ):
     # Arrange
     product_id = uuid7()
 
     mocker.patch.object(
-        mock_http_client,
-        mock_http_client.get.__name__,
+        http_client_stub,
+        http_client_stub.get.__name__,
         return_value=HttpResponse(
             status_code=HTTPStatus.IM_A_TEAPOT,
             json={},
