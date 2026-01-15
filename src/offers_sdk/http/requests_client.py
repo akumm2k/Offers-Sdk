@@ -37,10 +37,10 @@ class RequestsClient(BaseHttpClient):
     def redact_auth_token_hook[**P](
         resp: requests.Response, *args: P.args, **kwargs: P.kwargs
     ) -> None:
-        headers_to_redact = [
+        headers_to_redact = {
             BaseHttpClient._ACCESS_TOKEN_HEADER_KEY,
             BaseHttpClient._REFRESH_TOKEN_HEADER_KEY,
-        ]
+        }
         for header in headers_to_redact:
             if header in resp.request.headers:
                 resp.request.headers[header] = "REDACTED"
