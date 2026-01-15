@@ -30,6 +30,7 @@ dev = [
     "ruff>=0.14.11",
     "isort>=7.0.0",
     "mypy>=1.19.1",
+    "requests-mock>=1.12.1",
 ]
 
 [tool.ruff]

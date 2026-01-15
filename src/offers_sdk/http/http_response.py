@@ -17,6 +17,7 @@ JSONType: TypeAlias = (
 class HttpResponse:
     status_code: HTTPStatus
     json: JSONType
+    from_cache: bool = False
 
     def get_json_as[T](self, _type: Type[T]) -> T:
         if isinstance(self.json, _type):

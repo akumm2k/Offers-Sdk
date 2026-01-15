@@ -3,32 +3,13 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import pytest
+import requests_mock
 from pytest_mock import MockerFixture
-from requests_cache import CachedSession as Session
 
 from offers_sdk.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.base_client import BaseHttpClient
-from offers_sdk.http.http_response import JSONType
 from offers_sdk.http.requests_client import RequestsClient
-
-
-class MockResponse:
-    def __init__(
-        self,
-        status_code: HTTPStatus = HTTPStatus.OK,
-        json_data: JSONType = {},
-    ):
-        self.status_code = status_code
-        self._json_data = json_data or {}
-
-    def json(self):
-        return self._json_data
-
-
-async def no_refresh(self: BaseHttpClient) -> None:
-    return None
 
 
 @pytest.fixture
@@ -50,6 +31,7 @@ def requests_client(
         refresh_token="dummy",
         auth_endpoint="auth",
         token_manager=token_manager,
+        backend="memory",
     )
 
 
@@ -100,25 +82,22 @@ async def test_get(
         AuthTokenManager.is_current_token_expired.__name__,
         return_value=False,
     )
-    get_mock = mocker.patch.object(
-        Session,
-        Session.get.__name__,
-        return_value=MockResponse(expected_status, expected_json),
-    )
 
-    # Act
-    resp = await requests_client.get(
-        endpoint, params=params, headers=headers
-    )
+    with requests_mock.Mocker() as m:
+        m.get(
+            urljoin(base_url, endpoint),
+            status_code=expected_status,
+            json=expected_json,
+        )
 
-    # Assert
-    get_mock.assert_called_once_with(
-        urljoin(base_url, endpoint),
-        params=params,
-        headers=headers,
-    )
-    assert resp.status_code == expected_status
-    assert resp.json == expected_json
+        # Act
+        resp = await requests_client.get(
+            endpoint, params=params, headers=headers
+        )
+
+        # Assert
+        assert resp.status_code == expected_status
+        assert resp.json == expected_json
 
 
 _POST_TEST_CASES = [
@@ -168,22 +147,57 @@ async def test_post(
         AuthTokenManager.is_current_token_expired.__name__,
         return_value=False,
     )
-    post_mock = mocker.patch.object(
-        Session,
-        Session.post.__name__,
-        return_value=MockResponse(expected_status, expected_json),
-    )
 
-    # Act
-    resp = await requests_client.post(
-        endpoint, data=data, headers=headers_arg
-    )
+    with requests_mock.Mocker() as m:
+        m.post(
+            urljoin(base_url, endpoint),
+            status_code=expected_status,
+            json=expected_json,
+        )
 
-    # Assert
-    post_mock.assert_called_once_with(
-        urljoin(base_url, endpoint),
-        json=data,
-        headers=headers_arg,
-    )
-    assert resp.status_code == expected_status
-    assert resp.json == expected_json
+        # Act
+        resp = await requests_client.post(
+            endpoint, data=data, headers=headers_arg
+        )
+
+        # Assert
+        assert resp.status_code == expected_status
+        assert resp.json == expected_json
+
+
+@pytest.mark.asyncio
+async def test_auth_is_not_cached(
+    requests_client: RequestsClient,
+    base_url: str,
+):
+    with requests_mock.Mocker() as m:
+        m.post(
+            urljoin(base_url, "auth"), json={"access_token": "token"}
+        )
+
+        r1 = await requests_client.post("auth")
+        assert r1.from_cache is False
+
+        r2 = await requests_client.post("auth")
+        assert r2.from_cache is False
+
+
+@pytest.mark.asyncio
+async def test_other_endpoints_are_cached(
+    requests_client: RequestsClient,
+    base_url: str,
+):
+    with requests_mock.Mocker() as m:
+        m.get(
+            urljoin(base_url, "data"),
+            json={"value": 42},
+        )
+        m.post(
+            urljoin(base_url, "auth"), json={"access_token": "token"}
+        )
+
+        r1 = await requests_client.get("data")
+        assert r1.from_cache is False
+
+        r2 = await requests_client.get("data")
+        assert r2.from_cache is True

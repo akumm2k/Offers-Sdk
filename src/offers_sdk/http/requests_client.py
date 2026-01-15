@@ -44,6 +44,7 @@ class RequestsClient(BaseHttpClient):
         refresh_token: str,
         auth_endpoint: str,
         token_manager: AuthTokenManager,
+        backend: str = "filesystem",
     ) -> None:
         super().__init__(
             base_url=base_url,
@@ -53,7 +54,7 @@ class RequestsClient(BaseHttpClient):
         )
         self._session = requests_cache.CachedSession(
             cache_name="offers_http_cache",
-            backend="filesystem",
+            backend=backend,
             cache_control=True,
             expire_after=60 * 5,
             ignored_params=[
@@ -80,6 +81,7 @@ class RequestsClient(BaseHttpClient):
             return HttpResponse(
                 status_code=HTTPStatus(response.status_code),
                 json=response.json(),
+                from_cache=response.from_cache,
             )
 
         return await asyncio.to_thread(sync_get)
@@ -97,6 +99,7 @@ class RequestsClient(BaseHttpClient):
             return HttpResponse(
                 status_code=HTTPStatus(response.status_code),
                 json=response.json(),
+                from_cache=response.from_cache,
             )
 
         return await asyncio.to_thread(sync_post)
