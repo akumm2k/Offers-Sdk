@@ -18,6 +18,7 @@ dependencies = [
     "requests>=2.32.5",
     "requests-cache>=1.2.1",
     "result>=0.17.0",
+    "rich>=14.2.0",
 ]
 
 [dependency-groups]

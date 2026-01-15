@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 import questionary
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 
 from container import Container
 from offers_sdk.client import OffersClient
@@ -15,6 +15,7 @@ from questionary_cli.commands.register_product import (
 LOGGER = logging.getLogger(__name__)
 
 
+@inject
 def run_cli(
     client: OffersClient = Provide[Container.offers_client],
 ) -> None:

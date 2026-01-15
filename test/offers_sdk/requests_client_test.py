@@ -9,6 +9,7 @@ from pytest_mock import MockerFixture
 from offers_sdk.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
+from offers_sdk.http.base_client import BaseHttpClient
 from offers_sdk.http.requests_client import RequestsClient
 
 
@@ -201,3 +202,47 @@ async def test_other_endpoints_are_cached(
 
         r2 = await requests_client.get("data")
         assert r2.from_cache is True
+
+
+@pytest.mark.asyncio
+async def test_cached_item_headers_are_redacted(
+    requests_client: RequestsClient,
+    base_url: str,
+    mocker: MockerFixture,
+    token_manager: AuthTokenManager,
+):
+    # Arrange
+    mocker.patch.object(
+        token_manager,
+        AuthTokenManager.is_current_token_expired.__name__,
+        return_value=False,
+    )
+    endpoint = "data"
+    secret_headers = {
+        BaseHttpClient._ACCESS_TOKEN_HEADER_KEY: "sensitive-token",
+        BaseHttpClient._REFRESH_TOKEN_HEADER_KEY: "sensitive-token",
+    }
+    with requests_mock.Mocker() as mock:
+        mock.get(urljoin(base_url, endpoint), json={"value": 42})
+
+        # Act
+        resp1 = await requests_client.get(
+            endpoint, headers=secret_headers
+        )
+        resp2 = await requests_client.get(
+            endpoint, headers=secret_headers
+        )
+        cached_responses = list(
+            requests_client._session.cache.responses.values()
+        )
+
+        # Assert
+        assert len(cached_responses) == 1
+        cached_response = cached_responses[0]
+        assert resp1.from_cache is False and resp2.from_cache is True
+        assert cached_response.from_cache is True
+        for secret_header in secret_headers.keys():
+            assert (
+                cached_response.request.headers[secret_header]
+                == "REDACTED"
+            )

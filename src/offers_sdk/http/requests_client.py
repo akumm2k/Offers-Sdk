@@ -34,6 +34,18 @@ class RequestsClient(BaseHttpClient):
     )
 
     @staticmethod
+    def redact_auth_token_hook[**P](
+        resp: requests.Response, *args: P.args, **kwargs: P.kwargs
+    ) -> None:
+        headers_to_redact = [
+            BaseHttpClient._ACCESS_TOKEN_HEADER_KEY,
+            BaseHttpClient._REFRESH_TOKEN_HEADER_KEY,
+        ]
+        for header in headers_to_redact:
+            if header in resp.request.headers:
+                resp.request.headers[header] = "REDACTED"
+
+    @staticmethod
     def filter_out_auth_response(resp: requests.Response) -> bool:
         return not resp.url.endswith("/auth")
 
@@ -61,6 +73,7 @@ class RequestsClient(BaseHttpClient):
                 BaseHttpClient._ACCESS_TOKEN_HEADER_KEY,
                 BaseHttpClient._REFRESH_TOKEN_HEADER_KEY,
             ],
+            allowable_methods=["GET"],
             serializer="json",
             filter_fn=RequestsClient.filter_out_auth_response,
         )
@@ -77,6 +90,9 @@ class RequestsClient(BaseHttpClient):
                 url,
                 params=params,
                 headers=headers | self._default_headers,
+                hooks={
+                    "response": RequestsClient.redact_auth_token_hook
+                },
             )
             return HttpResponse(
                 status_code=HTTPStatus(response.status_code),
