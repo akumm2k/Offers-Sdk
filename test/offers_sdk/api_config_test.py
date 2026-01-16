@@ -19,7 +19,6 @@ def env_vars() -> Dict:
 def test_from_env_loads_config_successfully(
     monkeypatch: MonkeyPatch, env_vars: Dict
 ):
-    # Set environment variables using monkeypatch
     for key, value in env_vars.items():
         monkeypatch.setenv(key, value)
 

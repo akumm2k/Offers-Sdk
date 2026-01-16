@@ -8,6 +8,7 @@ from pytest_mock import MockerFixture
 from offers_sdk.client import OffersClient
 from offers_sdk.exceptions import ValidationError
 from offers_sdk.models import Offer, Product
+from questionary_cli.commands.get_offers import print_offers_table
 from questionary_cli.commands.get_offers import run as get_offers
 from questionary_cli.commands.register_product import (
     run as register_product,
@@ -160,8 +161,6 @@ async def test_get_offers_with_offers(
 def test_print_offers_table(
     mocker: MockerFixture,
 ) -> None:
-    from questionary_cli.commands.get_offers import print_offers_table
-
     offers = [
         Offer(id=uuid7(), price=19, items_in_stock=10),
         Offer(id=uuid7(), price=29, items_in_stock=5),
