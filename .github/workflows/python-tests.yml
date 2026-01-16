@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v4
@@ -21,6 +21,13 @@ jobs:
       with:
         python-version: "3.14"
 
+    - name: Install system dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libdbus-glib-1-dev
+      shell: bash
+
     - name: Install uv
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -29,6 +36,12 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --dev
+      shell: bash
+
+    - name: Add ubuntu keyring dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        uv add secretstorage dbus-python
       shell: bash
 
     - name: Lint with ruff
