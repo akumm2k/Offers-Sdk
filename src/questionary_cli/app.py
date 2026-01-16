@@ -14,11 +14,33 @@ from questionary_cli.commands.register_product import (
 
 LOGGER = logging.getLogger(__name__)
 
+APPLIFTING_ASCII = """
+                        ↑
+                       ↑↑↑
+                      ↑↑↑↑↑
+                     ↑↑↑↑↑↑↑
+                    ↑↑↑↑ ↑↑↑↑
+                    ↑↑↑   ↑↑↑↑
+                   ↑↑↑↑↑↑↑↑↑↑↑
+                  ↑↑↑↑↑↑↑↑↑↑↑↑↑
+                 ↑↑↑↑       ↑↑↑↑
+
+                      ↑↑↑↑↑
+                    ↑↑↑↑↑↑↑↑↑
+                    ↑↑↑↑↑↑↑↑↑
+                    ↑↑↑↑↑↑↑↑↑
+                     ↑ ↑↑↑ ↑
+                       ↑↑↑
+                        ↑
+                        ↑
+"""
+
 
 @inject
 def run_cli(
     client: OffersClient = Provide[Container.offers_client],
 ) -> None:
+    questionary.print(APPLIFTING_ASCII, style="bold fg:green")
     LOGGER.info("Starting Offers CLI")
     while True:
         try:
