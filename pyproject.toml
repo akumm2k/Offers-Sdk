@@ -1,6 +1,6 @@
 [project]
 name = "offers-sdk-applifting"
-version = "0.1.5"
+version = "0.1.6"
 description = "SDK for interacting with the Offers API"
 authors = [
     { name = "Aryan Kumar", email = "akumm2k@gmail.com" }
