@@ -35,7 +35,11 @@ The Offers SDK provides a Pythonic interface to interact with an offers API. It 
 
 ### Installation
 
-TODO: Add packaging and installation instructions once published.
+https://test.pypi.org/project/offers-sdk-applifting/
+
+```bash
+pip install -i https://test.pypi.org/simple/ offers-sdk-applifting
+```
 
 ### Setup Configuration
 
