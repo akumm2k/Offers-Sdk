@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import (
     Dict,
 )
@@ -23,6 +24,7 @@ class TokenRefreshError(Exception):
 class BaseHttpClient(ABC):
     _ACCESS_TOKEN_HEADER_KEY = "Bearer"
     _REFRESH_TOKEN_HEADER_KEY = "Bearer"
+    _CACHE_PATH = Path.home() / ".cache" / "offers_sdk"
 
     def __init__(
         self,

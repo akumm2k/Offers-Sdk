@@ -7,17 +7,16 @@ from offers_sdk_applifting.config import ApiConfig
 from questionary_cli.app import run_cli
 from questionary_cli.container import Container
 
+LOGS_PATH = Path.home() / ".local" / "share" / "offers_cli" / "logs"
+
 
 def setup_logging() -> None:
-    package_dir = Path(__file__).parent
-    log_dir = package_dir / "logs"
-    log_dir.mkdir(exist_ok=True)
-
-    log_file = log_dir / "offers_cli.log"
+    LOGS_PATH.mkdir(parents=True, exist_ok=True)
+    log_file = LOGS_PATH / "offers_cli.log"
 
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        filename=str(log_file),
+        filename=log_file,
         filemode="a",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.DEBUG,
@@ -46,5 +45,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
     main()

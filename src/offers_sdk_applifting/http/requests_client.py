@@ -45,9 +45,10 @@ class RequestsClient(BaseHttpClient):
             if header in resp.request.headers:
                 resp.request.headers[header] = "REDACTED"
 
-    @staticmethod
-    def filter_out_auth_response(resp: requests.Response) -> bool:
-        return not resp.url.endswith("/auth")
+    def filter_out_auth_response(
+        self, resp: requests.Response
+    ) -> bool:
+        return not resp.url.endswith(self._auth_endpoint)
 
     def __init__(
         self,
@@ -65,7 +66,7 @@ class RequestsClient(BaseHttpClient):
             token_manager=token_manager,
         )
         self._session = requests_cache.CachedSession(
-            cache_name="offers_http_cache",
+            cache_name=BaseHttpClient._CACHE_PATH / "requests_cache",
             backend=backend,
             cache_control=True,
             expire_after=60 * 5,
@@ -75,7 +76,7 @@ class RequestsClient(BaseHttpClient):
             ],
             allowable_methods=["GET"],
             serializer="json",
-            filter_fn=RequestsClient.filter_out_auth_response,
+            filter_fn=self.filter_out_auth_response,
         )
         self._session.mount("https://", RequestsClient._ADAPTER)
 
