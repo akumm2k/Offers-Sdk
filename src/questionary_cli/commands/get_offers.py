@@ -5,8 +5,8 @@ import questionary
 from rich import table
 from rich.console import Console
 
-from offers_sdk.client import OffersClient
-from offers_sdk.models import Offer
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.models import Offer
 
 CONSOLE = Console()
 

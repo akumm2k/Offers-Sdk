@@ -93,7 +93,7 @@ This provides an interactive menu to:
 - Fetch offers for a product
 - Register new products
 
-Credentials and configuration are loaded from environment variables as described above.
+Credentials and configuration are loaded from environment variables as described above. So, make sure to set them before running the CLI.
 
 #### Registering a Product
 

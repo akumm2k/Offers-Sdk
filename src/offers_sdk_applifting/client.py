@@ -3,23 +3,28 @@ from http import HTTPStatus
 from typing import Awaitable, Callable, List, Optional
 from uuid import UUID
 
-from offers_sdk.config import ApiConfig
-from offers_sdk.exceptions import (
+from offers_sdk_applifting.config import ApiConfig
+from offers_sdk_applifting.exceptions import (
     AuthenticationError,
     SDKError,
     ServerError,
     ValidationError,
 )
-from offers_sdk.http.auth_token.keyring_token_manager import (
+from offers_sdk_applifting.http.auth_token.keyring_token_manager import (
     KeyringTokenManager,
 )
-from offers_sdk.http.base_client import (
+from offers_sdk_applifting.http.base_client import (
     BaseHttpClient,
     HttpResponse,
     TokenRefreshError,
 )
-from offers_sdk.http.requests_client import RequestsClient
-from offers_sdk.models import Offer, Offers, Product, ProductID
+from offers_sdk_applifting.http.requests_client import RequestsClient
+from offers_sdk_applifting.models import (
+    Offer,
+    Offers,
+    Product,
+    ProductID,
+)
 
 TOKEN_ERROR_MESSAGES = {
     HTTPStatus.UNAUTHORIZED: "Failed to refresh token",

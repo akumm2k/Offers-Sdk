@@ -1,6 +1,6 @@
 from typing import Optional
 
-from offers_sdk.http.base_client import HttpResponse
+from offers_sdk_applifting.http.base_client import HttpResponse
 
 
 class SDKError(Exception):

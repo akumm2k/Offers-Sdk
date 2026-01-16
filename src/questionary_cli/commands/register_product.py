@@ -1,6 +1,6 @@
 import questionary
 
-from offers_sdk.models import Product
+from offers_sdk_applifting.models import Product
 
 
 async def run(client) -> None:

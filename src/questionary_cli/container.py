@@ -1,15 +1,15 @@
 from dependency_injector import containers, providers
 
-from offers_sdk.client import OffersClient
-from offers_sdk.config import ApiConfig
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.config import ApiConfig
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.auth_token.keyring_token_manager import (
+from offers_sdk_applifting.http.auth_token.keyring_token_manager import (
     KeyringTokenManager,
 )
-from offers_sdk.http.base_client import BaseHttpClient
-from offers_sdk.http.requests_client import RequestsClient
+from offers_sdk_applifting.http.base_client import BaseHttpClient
+from offers_sdk_applifting.http.requests_client import RequestsClient
 
 
 class Container(containers.DeclarativeContainer):

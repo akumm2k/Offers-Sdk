@@ -3,13 +3,13 @@ from typing import Dict
 import pytest
 from pytest_mock import MockerFixture
 
-from offers_sdk.client import OffersClient
-from offers_sdk.config import ApiConfig
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.config import ApiConfig
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.base_client import BaseHttpClient
-from offers_sdk.http.http_response import HttpResponse
+from offers_sdk_applifting.http.base_client import BaseHttpClient
+from offers_sdk_applifting.http.http_response import HttpResponse
 
 
 @pytest.fixture

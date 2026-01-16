@@ -8,10 +8,10 @@ import requests_cache
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.base_client import (
+from offers_sdk_applifting.http.base_client import (
     BaseHttpClient,
     HttpResponse,
 )

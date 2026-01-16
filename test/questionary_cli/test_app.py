@@ -5,8 +5,8 @@ import pytest
 import questionary
 from pytest_mock import MockerFixture
 
-from offers_sdk.client import OffersClient
-from offers_sdk.exceptions import ValidationError
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.exceptions import ValidationError
 from questionary_cli.actions import Actions
 from questionary_cli.app import run_cli, run_is_finished
 

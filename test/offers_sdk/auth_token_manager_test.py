@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import pytest
 
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
 

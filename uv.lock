@@ -569,8 +569,8 @@ wheels = [
 ]
 
 [[package]]
-name = "offers-sdk"
-version = "0.1.0"
+name = "offers-sdk-applifting"
+version = "0.1.5"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

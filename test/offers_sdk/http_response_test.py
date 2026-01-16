@@ -3,7 +3,7 @@ from typing import Type
 
 import pytest
 
-from offers_sdk.http.http_response import (
+from offers_sdk_applifting.http.http_response import (
     HttpResponse,
     JSONType,
 )

@@ -4,10 +4,10 @@ from typing import (
     Dict,
 )
 
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.http_response import HttpResponse
+from offers_sdk_applifting.http.http_response import HttpResponse
 
 LOGGER = logging.getLogger(__name__)
 

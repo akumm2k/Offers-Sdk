@@ -4,13 +4,13 @@ import logging
 import questionary
 from dependency_injector.wiring import Provide, inject
 
-from container import Container
-from offers_sdk.client import OffersClient
+from offers_sdk_applifting.client import OffersClient
 from questionary_cli.actions import Actions
 from questionary_cli.commands.get_offers import run as get_offers
 from questionary_cli.commands.register_product import (
     run as register_product,
 )
+from questionary_cli.container import Container
 
 LOGGER = logging.getLogger(__name__)
 

@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
-from offers_sdk.exceptions import SDKError
-from offers_sdk.http.http_response import HttpResponse
+from offers_sdk_applifting.exceptions import SDKError
+from offers_sdk_applifting.http.http_response import HttpResponse
 
 
 @pytest.mark.parametrize(

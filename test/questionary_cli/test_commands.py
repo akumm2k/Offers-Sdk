@@ -5,9 +5,9 @@ import pytest
 import questionary
 from pytest_mock import MockerFixture
 
-from offers_sdk.client import OffersClient
-from offers_sdk.exceptions import ValidationError
-from offers_sdk.models import Offer, Product
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.exceptions import ValidationError
+from offers_sdk_applifting.models import Offer, Product
 from questionary_cli.commands.get_offers import print_offers_table
 from questionary_cli.commands.get_offers import run as get_offers
 from questionary_cli.commands.register_product import (

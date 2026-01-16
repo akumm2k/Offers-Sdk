@@ -4,19 +4,22 @@ from uuid import UUID, uuid7
 import pytest
 from pytest_mock import MockerFixture
 
-from offers_sdk.client import OffersClient
-from offers_sdk.exceptions import (
+from offers_sdk_applifting.client import OffersClient
+from offers_sdk_applifting.exceptions import (
     AuthenticationError,
     SDKError,
     ServerError,
     ValidationError,
 )
-from offers_sdk.http.base_client import (
+from offers_sdk_applifting.http.base_client import (
     BaseHttpClient,
     TokenRefreshError,
 )
-from offers_sdk.http.http_response import HttpResponse, JSONType
-from offers_sdk.models import Offers, Product
+from offers_sdk_applifting.http.http_response import (
+    HttpResponse,
+    JSONType,
+)
+from offers_sdk_applifting.models import Offers, Product
 
 
 @pytest.mark.asyncio

@@ -7,7 +7,7 @@ import keyring
 import pytest
 from pytest_mock import MockerFixture
 
-from offers_sdk.http.auth_token.keyring_token_manager import (
+from offers_sdk_applifting.http.auth_token.keyring_token_manager import (
     KeyringTokenManager,
 )
 

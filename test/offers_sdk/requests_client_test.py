@@ -6,11 +6,11 @@ import pytest
 import requests_mock
 from pytest_mock import MockerFixture
 
-from offers_sdk.http.auth_token.auth_token_manager import (
+from offers_sdk_applifting.http.auth_token.auth_token_manager import (
     AuthTokenManager,
 )
-from offers_sdk.http.base_client import BaseHttpClient
-from offers_sdk.http.requests_client import RequestsClient
+from offers_sdk_applifting.http.base_client import BaseHttpClient
+from offers_sdk_applifting.http.requests_client import RequestsClient
 
 
 @pytest.fixture
