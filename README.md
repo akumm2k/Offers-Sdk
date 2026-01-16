@@ -4,7 +4,7 @@ A modern, async-first Python SDK for fetching and managing product offers with t
 
 ## CLI Demo
 
-![](media/demo-readme.gif)
+![CLI Demo GIF](media/demo-readme-2.gif)
 
 ## Features
 
