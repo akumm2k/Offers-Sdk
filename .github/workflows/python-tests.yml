@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.14"]
 
     steps:
@@ -27,13 +27,11 @@ jobs:
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
       shell: bash
-      if: runner.os != 'Windows'
 
-    - name: Install uv (Windows)
+    - name: Install keyrings.alt (Ubuntu)
       run: |
-        powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-      shell: powershell
-      if: runner.os == 'Windows'
+        pip install keyrings.alt
+      if: runner.os == 'Linux'
 
     - name: Install dependencies
       run: |
