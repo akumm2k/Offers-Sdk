@@ -51,4 +51,4 @@ def run_is_finished(client: OffersClient) -> bool:
         questionary.print("Bye!")
         return True
 
-    return False
+    return False  # pragma: no cover (unreachable)

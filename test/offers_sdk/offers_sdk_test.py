@@ -1,20 +1,15 @@
 from http import HTTPStatus
-from typing import Dict
 from uuid import UUID, uuid7
 
 import pytest
 from pytest_mock import MockerFixture
 
 from offers_sdk.client import OffersClient
-from offers_sdk.config import ApiConfig
 from offers_sdk.exceptions import (
     AuthenticationError,
     SDKError,
     ServerError,
     ValidationError,
-)
-from offers_sdk.http.auth_token.auth_token_manager import (
-    AuthTokenManager,
 )
 from offers_sdk.http.base_client import (
     BaseHttpClient,
@@ -22,51 +17,6 @@ from offers_sdk.http.base_client import (
 )
 from offers_sdk.http.http_response import HttpResponse, JSONType
 from offers_sdk.models import Offers, Product
-
-
-@pytest.fixture
-def api_config():
-    return ApiConfig(
-        base_url="https://api.example.com",
-        auth_endpoint="/auth",
-        refresh_token="test-refresh-token",
-        persistent_auth_token_key="",
-    )
-
-
-@pytest.fixture
-def offers_sdk(
-    api_config: ApiConfig, http_client_stub: HttpClientStub
-) -> OffersClient:
-    return OffersClient(api_config, http_client=http_client_stub)
-
-
-class HttpClientStub(BaseHttpClient):
-    """
-    We patch the get and post methods in tests, so these are not implemented.
-    """
-
-    async def _unauthenticated_get(
-        self, endpoint: str, params: Dict = {}, headers: Dict = {}
-    ) -> HttpResponse:
-        raise NotImplementedError  # pragma: no cover
-
-    async def _unauthenticated_post(
-        self, endpoint: str, data: Dict = {}, headers: Dict = {}
-    ) -> HttpResponse:
-        raise NotImplementedError  # pragma: no cover
-
-
-@pytest.fixture
-def http_client_stub(
-    api_config: ApiConfig, mocker: MockerFixture
-) -> HttpClientStub:
-    return HttpClientStub(
-        base_url=api_config.base_url,
-        refresh_token=api_config.refresh_token,
-        auth_endpoint=api_config.auth_endpoint,
-        token_manager=mocker.Mock(spec=AuthTokenManager),
-    )
 
 
 @pytest.mark.asyncio
@@ -86,7 +36,7 @@ def http_client_stub(
 async def test_get_offers(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
     response_data: JSONType,
 ):
     # Arrange
@@ -128,7 +78,7 @@ async def test_get_offers(
 async def test_register_product(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
     product: Product,
 ):
     # Arrange
@@ -161,7 +111,7 @@ async def test_register_product(
 async def test_get_offers_authentication_error(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product_id = uuid7()
@@ -187,7 +137,7 @@ async def test_get_offers_authentication_error(
 async def test_get_offers_validation_error(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product_id = uuid7()
@@ -212,7 +162,7 @@ async def test_get_offers_validation_error(
 async def test_get_offers_server_error(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product_id = uuid7()
@@ -236,7 +186,7 @@ async def test_get_offers_server_error(
 async def test_register_product_validation_error_conflict(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product = Product(
@@ -264,7 +214,7 @@ async def test_register_product_validation_error_conflict(
 async def test_token_refresh_error_handling(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product_id = uuid7()
@@ -292,7 +242,7 @@ async def test_token_refresh_error_handling(
 async def test_unexpected_api_error_handling(
     mocker: MockerFixture,
     offers_sdk: OffersClient,
-    http_client_stub: HttpClientStub,
+    http_client_stub: BaseHttpClient,
 ):
     # Arrange
     product_id = uuid7()
