@@ -20,7 +20,7 @@ class KeyringTokenManager(AuthTokenManager):
         )
         return token
 
-    def store_token(self, token: str) -> None:
+    def set_token(self, token: str) -> None:
         keyring.set_password(
             KeyringTokenManager._KEYRING_SERVICE_NAME,
             self._token_key,

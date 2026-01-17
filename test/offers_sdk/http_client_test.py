@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
+from typing import Callable
 
 import jwt
 import pytest
@@ -37,18 +38,6 @@ def expired_token() -> str:
         algorithm="HS256",
     )
     return token
-
-
-class MockTokenManager(AuthTokenManager):
-    def __init__(self, get_token_value: str) -> None:
-        self._get_token_value = get_token_value
-        super().__init__()
-
-    def get_token(self) -> str:
-        return self._get_token_value
-
-    def store_token(self, token: str) -> None:
-        pass
 
 
 class MockClient(BaseHttpClient):
@@ -101,9 +90,10 @@ class TestHttpClientTokenRefresh:
     async def test_should_refresh_missing_auth_token(
         self,
         future_expiry_token: str,
+        token_manager_stub_factory: Callable[[str], AuthTokenManager],
     ):
         # Arrange
-        token_manager = MockTokenManager(get_token_value="")
+        token_manager = token_manager_stub_factory("")
         client = MockClient(
             refresh_token=_VALID_REFRESH_TOKEN,
             auth_endpoint="auth",
@@ -122,11 +112,10 @@ class TestHttpClientTokenRefresh:
         self,
         future_expiry_token: str,
         expired_token: str,
+        token_manager_stub_factory: Callable[[str], AuthTokenManager],
     ):
         # Arrange
-        token_manager = MockTokenManager(
-            get_token_value=expired_token
-        )
+        token_manager = token_manager_stub_factory(expired_token)
         client = MockClient(
             refresh_token=_VALID_REFRESH_TOKEN,
             auth_endpoint="auth",
@@ -145,10 +134,11 @@ class TestHttpClientTokenRefresh:
         self,
         future_expiry_token: str,
         mocker: MockerFixture,
+        token_manager_stub_factory: Callable[[str], AuthTokenManager],
     ):
         # Arrange
-        token_manager = MockTokenManager(
-            get_token_value=future_expiry_token
+        token_manager = token_manager_stub_factory(
+            future_expiry_token
         )
         mocker.patch.object(
             token_manager,
@@ -172,9 +162,10 @@ class TestHttpClientTokenRefresh:
     async def test_should_throw_on_invalid_refresh_token(
         self,
         future_expiry_token: str,
+        token_manager_stub_factory: Callable[[str], AuthTokenManager],
     ):
         # Arrange
-        token_manager = MockTokenManager(get_token_value="")
+        token_manager = token_manager_stub_factory("")
         client = MockClient(
             refresh_token="invalid_refresh_token",
             auth_endpoint="auth",
