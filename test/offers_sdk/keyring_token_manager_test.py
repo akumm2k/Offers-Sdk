@@ -50,6 +50,12 @@ def test_store_token_saves_to_keyring(mocker: MockerFixture) -> None:
         keyring,
         keyring.set_password.__name__,
     )
+    # mock get for automatic retrieval during initialization
+    mocker.patch.object(
+        keyring,
+        keyring.get_password.__name__,
+        return_value=None,
+    )
     token_mgr = KeyringTokenManager(_TOKEN_KEY)
     test_token = "sample_token_456"
 
