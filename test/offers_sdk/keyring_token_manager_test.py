@@ -54,7 +54,7 @@ def test_store_token_saves_to_keyring(mocker: MockerFixture) -> None:
     test_token = "sample_token_456"
 
     # Act
-    token_mgr.store_token(test_token)
+    token_mgr.set_token(test_token)
 
     # Assert
     set_password_mock.assert_called_once_with(

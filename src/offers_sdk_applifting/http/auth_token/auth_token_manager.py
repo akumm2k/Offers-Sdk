@@ -29,7 +29,7 @@ class AuthTokenManager(ABC):
         self._access_token = valid_token
         self._token_expiry = self._decode_jwt_expiry(valid_token)
         if save:
-            self.store_token(valid_token)
+            self.set_token(valid_token)
 
     def is_current_token_expired(self) -> bool:
         return (
@@ -42,7 +42,7 @@ class AuthTokenManager(ABC):
         pass
 
     @abstractmethod
-    def store_token(self, token: str) -> None:
+    def set_token(self, token: str) -> None:
         pass
 
     @lru_cache
