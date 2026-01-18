@@ -92,8 +92,8 @@ asyncio.run(main())
 
 ### Using the CLI
 
-
 This provides an interactive menu to:
+
 - Fetch offers for a product
 - Register new products
 
@@ -102,6 +102,7 @@ Credentials and configuration are loaded from environment variables as described
 #### Registering a Product
 
 ```bash
+$ offers
 
                         ↑
                        ↑↑↑
@@ -154,4 +155,3 @@ Credentials and configuration are loaded from environment variables as described
 │ 6ba7a340-d936-5306-2472-691d220439e6 │ 40915 │ 35             │
 └──────────────────────────────────────┴───────┴────────────────┘
 ```
-
