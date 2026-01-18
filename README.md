@@ -102,7 +102,7 @@ Credentials and configuration are loaded from environment variables as described
 #### Registering a Product
 
 ```bash
-> offers
+$ offers
 
                         ↑
                        ↑↑↑
