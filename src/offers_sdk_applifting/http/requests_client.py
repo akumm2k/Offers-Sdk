@@ -90,7 +90,7 @@ class RequestsClient(BaseHttpClient):
             response = self._session.get(
                 url,
                 params=params,
-                headers=headers | self._default_headers,
+                headers=self._default_headers | headers,
                 hooks={
                     "response": RequestsClient._redact_auth_token_hook
                 },
@@ -111,7 +111,7 @@ class RequestsClient(BaseHttpClient):
             response = self._session.post(
                 url,
                 json=data,
-                headers=headers | self._default_headers,
+                headers=self._default_headers | headers,
             )
             return HttpResponse(
                 status_code=HTTPStatus(response.status_code),
